@@ -1,0 +1,5 @@
+interface:
+  display_name: Analog Layout Local Access
+  short_description: Run the local access stage with verified inputs
+  default_prompt: Use $analog-layout-local-access for the requested stage, preserving
+    PDK evidence, circuit intent and revision-bound checks.

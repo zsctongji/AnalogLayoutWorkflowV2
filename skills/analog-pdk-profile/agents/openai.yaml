@@ -1,0 +1,6 @@
+interface:
+  display_name: "Analog PDK Profile"
+  short_description: "Extract and validate Virtuoso PDK routing rules"
+  default_prompt: "Use $analog-pdk-profile to extract and validate a read-only routing profile from an explicitly named Virtuoso layout technology database."
+policy:
+  allow_implicit_invocation: true

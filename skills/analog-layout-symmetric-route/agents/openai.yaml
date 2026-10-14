@@ -1,0 +1,4 @@
+interface:
+  display_name: "Joint Symmetric Routing"
+  short_description: "Search jointly legal mirrored Manhattan routes"
+  default_prompt: "Use $analog-layout-symmetric-route to jointly search mirrored routes using verified axis, complete pin maps and sourced PDK geometry."

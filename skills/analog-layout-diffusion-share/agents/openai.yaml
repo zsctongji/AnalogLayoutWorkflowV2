@@ -1,0 +1,5 @@
+interface:
+  display_name: Analog Layout Diffusion Share
+  short_description: Run the diffusion share stage with verified inputs
+  default_prompt: Use $analog-layout-diffusion-share for the requested stage, preserving
+    PDK evidence, circuit intent and revision-bound checks.

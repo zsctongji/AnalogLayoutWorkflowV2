@@ -1,0 +1,5 @@
+interface:
+  display_name: Analog Layout Macro Opt
+  short_description: Run the macro opt stage with verified inputs
+  default_prompt: Use $analog-layout-macro-opt for the requested stage, preserving
+    PDK evidence, circuit intent and revision-bound checks.

@@ -1,0 +1,10 @@
+# Research record — 2026-09-26
+
+This review inspected the project main repositories, official constraint documentation and accessible source files. It did not install upstream tools, copy upstream implementations or reuse example process parameters.
+
+- [ALIGN GitHub](https://github.com/ALIGN-analoglayout/ALIGN-public) and [official constraint documentation](https://align-analoglayout.github.io/ALIGN-public/notes/const.html): SymmetricBlocks expresses single-block self-symmetry and two-block symmetry; SymmetricNets expresses nets and ordered port correspondences. Order and Align are separate. Applied lesson: layout axes, row order and net correspondence are distinct constraints; a centerline cannot replace port verification.
+- [ALIGN constraint source](https://raw.githubusercontent.com/ALIGN-analoglayout/ALIGN-public/master/align/schema/constraint.py): a research entry point. This skill does not assume direct compatibility with every version of ALIGN JSON. Our input format is an independent adapter contract.
+- [MAGICAL GitHub](https://github.com/magical-eda/MAGICAL): the README distinguishes symmetry groups sharing a common axis, pairs and self-symmetry. Net symmetry requires reflected corresponding pins. Applied lesson: maintain separate device/macro and net mappings, and verify ports before routing handoff.
+- [MAGICAL PnR integration source](https://raw.githubusercontent.com/magical-eda/MAGICAL/master/flow/python/PnR.py): placement and routing are integrated as separate components. Applied lesson: output stable handoff files without silently making the placement script responsible for routing. This review does not claim execution of its solvers or inspection of all submodule implementations.
+
+Local handoffs: ALIGN supplies grouping/matching intent; diffusion-share supplies inseparable shared edges and contact evidence; guard-ring supplies complete per-module isolation domains; macro-opt supplies post-ring object inventories, constraint checks and rigid-transform verification. This skill adds common-axis row placement and geometric reflection audits without changing those skills.

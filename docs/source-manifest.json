@@ -1,0 +1,1764 @@
+{
+  "schema": "analog-layout-flow.source-manifest/v1",
+  "packaged_on": "2026-10-14",
+  "scope": "Source only; no circuit examples, private configuration, design captures or live qualification evidence",
+  "skills": [
+    "analog-layout-align",
+    "analog-layout-diffusion-share",
+    "analog-layout-drc",
+    "analog-layout-guard-ring",
+    "analog-layout-iterate",
+    "analog-layout-local-access",
+    "analog-layout-lvs",
+    "analog-layout-macro-opt",
+    "analog-layout-macro-symmetry",
+    "analog-layout-pex",
+    "analog-layout-place",
+    "analog-layout-route",
+    "analog-layout-symmetric-fast",
+    "analog-layout-symmetric-route",
+    "analog-layout-workflow",
+    "analog-netlist-crawl",
+    "analog-pdk-profile",
+    "analog-pipeline",
+    "operate-virtuoso-bridge",
+    "virtuoso-layout-practice"
+  ],
+  "files": [
+    {
+      "path": ".env.template",
+      "sha256": "16b5386340353edfe2c5953a91445e7210d4e7a8686e7cdf81e580b7e7e036b4",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": ".gitattributes",
+      "sha256": "a70b9ba670bce8ce490ea68b6fd94bc92fde029234c2981b87f51760413f3d00",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/bug_report.md",
+      "sha256": "dc35ce830f70f391a0333fc912f7df04d3a2dc267c86c19b003cbbc38460f7d9",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "sha256": "ecab1147e2ebbf3f7f0809406fa24e48d417eca434bb08ccc55fdfc4af9ae56a",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": ".github/workflows/offline-check.yml",
+      "sha256": "13489c1efdbf0d7b24fbeeaceb037396f7712fccb9715ea6903d1c26f9e06a52",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "2e9a2c778c29a7ce1a93ac7cca305ca2e053bcca950f9a74d1d9ae347a488512",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "config/registry.template.json",
+      "sha256": "1d74da5ef98775168dcf9f5861f8aca5015347f2f7700a7d7d9b41979769d3ab",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "config/site.template.json",
+      "sha256": "7ff47091a6c532d0f615506ec9a5cbe0c198bbd39e420a28c1fc99cb2745879b",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "b01e451575127eb6c7505abe932272a1ca1959ff2cd8d5c006822417a3bdf75b",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "345748eb94627766e7131d3ebf7e82bce4899697eb02a9c5e00686974735ff53",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "docs/configuration.md",
+      "sha256": "14c87f6e756addac1474bd5f203e0c52b5c060d8e810a5c5eb57f94df58af40d",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "docs/installation.md",
+      "sha256": "b27e2f67bed0c14cf4cf555ba0c4e66151e86a16466f41d32f472464b97a1a4d",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "docs/verification.md",
+      "sha256": "02522fe16f8862f852cdb70df5f57ba9fa4e9895085fd7d2426c986133f85326",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "LICENSE.md",
+      "sha256": "066fa83edd8808a94086f366329265817e2767d0e50d0377d31a0bd25ed593ca",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "b2636234d0a5edfb90c287d3f62055cd5ce78fe091bb1777dbbc85e6aec12ad5",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "README.md",
+      "sha256": "b5468e1b144d55e7fc44363a66af4e5016626bf41fa8ac915b341cca9706aec1",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "scripts/alflow.py",
+      "sha256": "b125c5a6a2c33fa4afc622de32b8f07a93fd6a7f3801985c087c38feb991d93a",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "scripts/check_repository.py",
+      "sha256": "36a5cb15396c5f2709891283d5b66b3c6ce0de539f762324108938df1184bd5f",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "scripts/install_skills.py",
+      "sha256": "d298f171cb2b0f07b42464bb2e07c5debc0618b557f1c3523da6e69bed452136",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "scripts/run_tests.py",
+      "sha256": "8b915f23a391fdc592718b37cce7e68e0dfee76a9509829d2ffb87c5c9923d11",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "scripts/update_manifest.py",
+      "sha256": "82e1fcac8c8a7ef12019e4f749eca8fe466b12c2259e391794fa9239594dbf4a",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "skills/analog-layout-align/agents/openai.yaml",
+      "sha256": "374166f3e2ff4974f7464bdd36f2997139242fbf8792b676d61d81680bdd19de",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/references/contracts.md",
+      "sha256": "8851980ebf6aca38e034760987228d696a0c6019792017b064812a6cf0593102",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/references/global-floorplan-review.md",
+      "sha256": "e9929cb6968676a4fd5d72190c7ee75c6f8457441f144a65e7ddc7adbb2f1ac8",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/references/optimization-contract.md",
+      "sha256": "be84bb8fea216e873c2120e81a79454d9e3df0efdf17e3457b99922d71e0b518",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/references/pre-placement-checklist.md",
+      "sha256": "905d43ad326f154444f16eae7b1041379a54af545c7d2fadc81eaf4485eeb839",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/references/reuse.md",
+      "sha256": "567aeb7ac2e77a9457887f8307fb8aeaf298f1753c06cbea7e105ee97855fa07",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/scripts/analyze_placement.py",
+      "sha256": "eb5eab8fb9b175ea8e78ab163175332d31b98bbcbf1d4b26defef850eaf819ac",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/scripts/apply_placement_intent.py",
+      "sha256": "430e532ab3dccc1634a95b341b2cfa8fb0d2e80554dde3b54f9a3801f6627c68",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/scripts/functional_groups.py",
+      "sha256": "556156b509335fb4038e3da71e7c61a0e2eeab00cdc08ce3600d5c465a0ac271",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/scripts/placement_candidates.py",
+      "sha256": "ecc19fd74102fc57827b18667c7c54102678af72bc3e237d1ad9ad1153883868",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/scripts/placement_flow.py",
+      "sha256": "096c9b0de3580af26242b1c3693d39ef0aa17b89d74865d840e87b299dbb71d7",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/scripts/placement_geometry.py",
+      "sha256": "bb4c20961c461a98d846caef4ed0d3f8482065fbc8fcebc32397302b6aa1abb9",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/scripts/placement_metrics.py",
+      "sha256": "23885956bd466240bc3545c337337cd042a93b4f83ee4471bf83df503035aaff",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/scripts/placement_optimizer.py",
+      "sha256": "939c5d5568b4c3f03fe9d93906738ff7203401ef72dc8997615a035aba778ba3",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/scripts/project_intent_metrics.py",
+      "sha256": "23a76bc93def91d6ca69af900f59e42b291fe5a5011db919072a206765d8a4e7",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/scripts/refine_placement_intent.py",
+      "sha256": "e3a235fed34953679ea7a988de4736efcaa161243295b806e5f23adbcd709d6c",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/SKILL.md",
+      "sha256": "fc5caf047bd5a7f8fb552317410f5b672bf40d50ff31c2dbf960af3879d7efdf",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/tests/test_apply_placement_intent.py",
+      "sha256": "4802573935159d240693749cf88448ac1a32e6038f9a6510b7c104ac838620d0",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/tests/test_functional_groups.py",
+      "sha256": "e51044df0ddc93c966d8888a0b07dca6eaa29edae8fa3cbd7109de4018f6fe44",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/tests/test_global_floorplan.py",
+      "sha256": "5790e184145327efb4a6ba516801418b165bb1bf2421394eb9c888727c576af2",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/tests/test_placement_closure.py",
+      "sha256": "ebcf2ccdb237c4f1eea34b9a671e90daee941d22119db11011b2c0c754645668",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/tests/test_placement_flow.py",
+      "sha256": "98a0f7ec51851a40766808702df02de6a8a0b429ef2571265aed3a7930704ee6",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/tests/test_placement_optimizer.py",
+      "sha256": "200e29a7fca6294b04fb95b5f000c34424d0e8ebf3efb1e7c653b6250abb1194",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/tests/test_project_intent_metrics.py",
+      "sha256": "749616694a1687195af681eaf632137e0e818e47433381bac5c8e9a5840b2bed",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/tests/test_refine_placement_intent.py",
+      "sha256": "dadd68bdf6dc9e631bca2d11ea3bfb622dbd7b364887b3cdbd50faf540513094",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-align/tests/test_single_placement_transaction.py",
+      "sha256": "9893b4445c88907f0b6cee405892e6793a4568e1fa2316a8757fe6aeaa9e8498",
+      "origin": "local-skill:analog-layout-align"
+    },
+    {
+      "path": "skills/analog-layout-diffusion-share/agents/openai.yaml",
+      "sha256": "24391c87cb424e9f620a09d6db945a75424a723c15e85b8a0f60b13090390f4d",
+      "origin": "local-skill:analog-layout-diffusion-share"
+    },
+    {
+      "path": "skills/analog-layout-diffusion-share/references/procedure.md",
+      "sha256": "c77a2b91e49fd091a58d73d039e1ebbf5a6b9237a3265170b66fc295dda74a81",
+      "origin": "local-skill:analog-layout-diffusion-share"
+    },
+    {
+      "path": "skills/analog-layout-diffusion-share/scripts/assess_facing_sources.py",
+      "sha256": "c50d4677005124ae69d74e867282ec3f4fa4523fdd78d8f442689d934f76c8fa",
+      "origin": "local-skill:analog-layout-diffusion-share"
+    },
+    {
+      "path": "skills/analog-layout-diffusion-share/scripts/inspect_pairs.py",
+      "sha256": "89dc57005185cea0411eef16c1cc37e52242c1bfe9c7cf903fda325512f09b3f",
+      "origin": "local-skill:analog-layout-diffusion-share"
+    },
+    {
+      "path": "skills/analog-layout-diffusion-share/SKILL.md",
+      "sha256": "e1ac576ae96606c71e143fde7991b9dc6e7ccf54f2e15d3427e5c28f0d4113ea",
+      "origin": "local-skill:analog-layout-diffusion-share"
+    },
+    {
+      "path": "skills/analog-layout-diffusion-share/tests/test_facing_sources.py",
+      "sha256": "ad26e87b5c01657c183930f10ac2ba7f91c9012e751fbd00ef07be8ed4b08fb7",
+      "origin": "local-skill:analog-layout-diffusion-share"
+    },
+    {
+      "path": "skills/analog-layout-diffusion-share/tests/test_inspect_pairs.py",
+      "sha256": "297ad8fdb34c630129f7881ae8ea836d083ec7cf982607efa535c9f0c07110f3",
+      "origin": "local-skill:analog-layout-diffusion-share"
+    },
+    {
+      "path": "skills/analog-layout-diffusion-share/tests/test_simple_policy.py",
+      "sha256": "c51587682fa627a4dbcf7c04719d7ac951f08a2e7b1dd04ba38eb10b24e03e1d",
+      "origin": "local-skill:analog-layout-diffusion-share"
+    },
+    {
+      "path": "skills/analog-layout-drc/agents/openai.yaml",
+      "sha256": "a14d0bf35e7f8806d34e4cbd43332fb39692f17bfe8a200ef2bf4edb722835b2",
+      "origin": "local-skill:analog-layout-drc"
+    },
+    {
+      "path": "skills/analog-layout-drc/references/calibre-runner.md",
+      "sha256": "c62b56611a9f7fff7ef3bf257d850408b8babbf5b5dedb71ac0ec2fbc61e4211",
+      "origin": "local-skill:analog-layout-drc"
+    },
+    {
+      "path": "skills/analog-layout-drc/references/marker-diagnosis.md",
+      "sha256": "fa647038990d4b85004e4c4fa1676b0f2aad6836f9aba0ba3e73921d0baf7651",
+      "origin": "local-skill:analog-layout-drc"
+    },
+    {
+      "path": "skills/analog-layout-drc/references/symmetric-repair.md",
+      "sha256": "b5317b0773c8d7a6149719502312f8730bf103c793b2afc6caf5c4f9f2179619",
+      "origin": "local-skill:analog-layout-drc"
+    },
+    {
+      "path": "skills/analog-layout-drc/scripts/calibre_drc.py",
+      "sha256": "9c99b4a543db66b9db48b049bcb95669bd9d7137ce9dc7e286572f07d224c6ce",
+      "origin": "local-skill:analog-layout-drc"
+    },
+    {
+      "path": "skills/analog-layout-drc/scripts/evidence_binding.py",
+      "sha256": "e104bfe635aeb4c46cb882927bf24b5cba56410ab97a7a731c0028ac79eef947",
+      "origin": "local-skill:analog-layout-drc"
+    },
+    {
+      "path": "skills/analog-layout-drc/scripts/marker_geometry.py",
+      "sha256": "0b4a60a3988b8cbd8fb14693be3a7137239467175f1a9ead989e8e20da5104b6",
+      "origin": "local-skill:analog-layout-drc"
+    },
+    {
+      "path": "skills/analog-layout-drc/scripts/symmetric_repair.py",
+      "sha256": "baced4afb4ef1625d7fab1c86a0204c4cbf13e698d7d94b1367f9ef056e2d61a",
+      "origin": "local-skill:analog-layout-drc"
+    },
+    {
+      "path": "skills/analog-layout-drc/SKILL.md",
+      "sha256": "d2c015237c6f927d1ed104f1585673c0ecb48d75f09f218f7b1525306cfed44f",
+      "origin": "local-skill:analog-layout-drc"
+    },
+    {
+      "path": "skills/analog-layout-drc/tests/test_calibre_drc.py",
+      "sha256": "e7ce6263da15ad5f550882d89951da1b7265c6ef5b679a566a220005e890cfd4",
+      "origin": "local-skill:analog-layout-drc"
+    },
+    {
+      "path": "skills/analog-layout-drc/tests/test_cli.py",
+      "sha256": "d9286ec6dbc71a6b9407b6c646a42364bc21eabd58b97b322ba994cf8b17ee47",
+      "origin": "local-skill:analog-layout-drc"
+    },
+    {
+      "path": "skills/analog-layout-drc/tests/test_safety.py",
+      "sha256": "2c260c1d944b74ef7d334f8b71bd04bcd46006b797d56a5de414e30e971ce339",
+      "origin": "local-skill:analog-layout-drc"
+    },
+    {
+      "path": "skills/analog-layout-guard-ring/agents/openai.yaml",
+      "sha256": "1898d760eaf86f558f85464a12ce21aa086dac57a5720c00fc48c6c3702c6554",
+      "origin": "local-skill:analog-layout-guard-ring"
+    },
+    {
+      "path": "skills/analog-layout-guard-ring/references/gate-access.md",
+      "sha256": "87ab837bac5cf18679f927a2f40c87aaae395960e8478111c09e6b753b800186",
+      "origin": "local-skill:analog-layout-guard-ring"
+    },
+    {
+      "path": "skills/analog-layout-guard-ring/references/reference-and-qualification.md",
+      "sha256": "0f8cfe6cfde329fe4421e0fc070325287d9ee1a37f15197559310825526240e8",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "skills/analog-layout-guard-ring/scripts/check_gate_access.py",
+      "sha256": "100d4de2fb30395e9f5386ec6601615adc862d9edab1b23da6f471b9b104bcc2",
+      "origin": "local-skill:analog-layout-guard-ring"
+    },
+    {
+      "path": "skills/analog-layout-guard-ring/scripts/inspect_reference.py",
+      "sha256": "1070ab7cfb4af03a60dc1f3f43aeb87441a2650cb9a455b19e4bf1f6020bdb8e",
+      "origin": "local-skill:analog-layout-guard-ring"
+    },
+    {
+      "path": "skills/analog-layout-guard-ring/scripts/partition_modules.py",
+      "sha256": "2b3831e53a5c21317923b30766af4c6dc91ffc459400407c7d7b50228e96ecb3",
+      "origin": "local-skill:analog-layout-guard-ring"
+    },
+    {
+      "path": "skills/analog-layout-guard-ring/scripts/plan_guard_ring.py",
+      "sha256": "b8c64fdc6749e93b462756374edbbca7cb4bbd40f21f6baa0dc612dfbeffabb0",
+      "origin": "local-skill:analog-layout-guard-ring"
+    },
+    {
+      "path": "skills/analog-layout-guard-ring/scripts/test_guard_ring.py",
+      "sha256": "74cdbbba656faa7231d6013b2fd37717ed25f2314a8f3ad157ea1b163abbbc36",
+      "origin": "local-skill:analog-layout-guard-ring"
+    },
+    {
+      "path": "skills/analog-layout-guard-ring/SKILL.md",
+      "sha256": "d5c45f35df799d8c69b674954aef02ab758cbb22da1c4d98c0fc1f778be56af1",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "skills/analog-layout-iterate/agents/openai.yaml",
+      "sha256": "9a6762fb6c916f6ca3fdc96c2f961cd4ec5f432cf1a55e0f81981709fc825b75",
+      "origin": "local-skill:analog-layout-iterate"
+    },
+    {
+      "path": "skills/analog-layout-iterate/references/diagnosis-decision.md",
+      "sha256": "74f58269a1693038111b8b2bf135f6e25cc745171c0a8a76a1662666178b5abf",
+      "origin": "local-skill:analog-layout-iterate"
+    },
+    {
+      "path": "skills/analog-layout-iterate/SKILL.md",
+      "sha256": "1c9f97d7c67bbc82941e6f78474a751b676a9f379788532db3e57b3162cf9c29",
+      "origin": "local-skill:analog-layout-iterate"
+    },
+    {
+      "path": "skills/analog-layout-local-access/agents/openai.yaml",
+      "sha256": "a6b2dd9edd73f7c5033a2f71816caa1d654f04ef8fd369fb8a07cc05e48282ac",
+      "origin": "local-skill:analog-layout-local-access"
+    },
+    {
+      "path": "skills/analog-layout-local-access/references/contract.md",
+      "sha256": "d10e691568b53b48f94676578372023ad95bfb58fd190b5edd2838ab53913b6e",
+      "origin": "local-skill:analog-layout-local-access"
+    },
+    {
+      "path": "skills/analog-layout-local-access/references/native-via.md",
+      "sha256": "121beb0bd5835679996ac02f687fa948520584697ede5b01e64ccd7a17543bf2",
+      "origin": "local-skill:analog-layout-local-access"
+    },
+    {
+      "path": "skills/analog-layout-local-access/scripts/local_access.py",
+      "sha256": "f1c5e8a2fc00adaeb20542fcc4382ea395f3803ce55a9ad541ae65b69f6565fc",
+      "origin": "local-skill:analog-layout-local-access"
+    },
+    {
+      "path": "skills/analog-layout-local-access/scripts/native_gate_adapter.py",
+      "sha256": "0c4222dfce38ffbcf0c983cf94575723d2a2b533593e62aafa65953e179dd6ab",
+      "origin": "local-skill:analog-layout-local-access"
+    },
+    {
+      "path": "skills/analog-layout-local-access/scripts/native_gate_via.py",
+      "sha256": "0d0ec8e7eb4825fba27a501f7bc2100a42d5df079e78b709f69d817e5f023652",
+      "origin": "local-skill:analog-layout-local-access"
+    },
+    {
+      "path": "skills/analog-layout-local-access/SKILL.md",
+      "sha256": "d604f6331232d336211c0f3884736bf5b5de08a9b98e3881267c132575f65f31",
+      "origin": "local-skill:analog-layout-local-access"
+    },
+    {
+      "path": "skills/analog-layout-local-access/tests/test_native_gate_via.py",
+      "sha256": "6cdab6039cc7b3533c463890c305577332726d5a65e01ba356d4a4f8a035b0fa",
+      "origin": "local-skill:analog-layout-local-access"
+    },
+    {
+      "path": "skills/analog-layout-lvs/agents/openai.yaml",
+      "sha256": "d785d0831f7a0231672196a7352c5a3d8e4d879335db80a4efcf9f1faa73f2ea",
+      "origin": "local-skill:analog-layout-lvs"
+    },
+    {
+      "path": "skills/analog-layout-lvs/references/repair.md",
+      "sha256": "fe749f0859e276414e2e614ba6a980dcf625f99ac0665d9321ae725c7bc33b5b",
+      "origin": "local-skill:analog-layout-lvs"
+    },
+    {
+      "path": "skills/analog-layout-lvs/references/research.md",
+      "sha256": "3af0e53f68589de95fc71c322050225cd65e383f148f14e1187a4ce76bbc7d90",
+      "origin": "local-skill:analog-layout-lvs"
+    },
+    {
+      "path": "skills/analog-layout-lvs/references/run-evidence.md",
+      "sha256": "180d5e1a763c461ef3f0e7e6d519b77bb7be6bcb7d952286f52fd2b0817a4560",
+      "origin": "local-skill:analog-layout-lvs"
+    },
+    {
+      "path": "skills/analog-layout-lvs/references/site.md",
+      "sha256": "5040a3d0998e156787ca015c08e01d9d15e96a44e3ebc0ae20080a4b8b936f1f",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "skills/analog-layout-lvs/scripts/inspect_report.py",
+      "sha256": "0376dc050489e74c6232209bff2fa78db777d59f6ee9e3b610ad8031d35aa4f7",
+      "origin": "local-skill:analog-layout-lvs"
+    },
+    {
+      "path": "skills/analog-layout-lvs/scripts/lvs_repair.py",
+      "sha256": "20b487eb80338b223cdc85484877dfc0f2fdfecedd1dab8ade6ce325268d0f9b",
+      "origin": "local-skill:analog-layout-lvs"
+    },
+    {
+      "path": "skills/analog-layout-lvs/scripts/test_inspect_report.py",
+      "sha256": "70d1dda2ea0fcbc8c3f60bd96b0139f652137f74d0151f33b938a55b6610e2bb",
+      "origin": "local-skill:analog-layout-lvs"
+    },
+    {
+      "path": "skills/analog-layout-lvs/scripts/test_lvs_repair.py",
+      "sha256": "f29b66849aa8e855e66fccdf62121f8e1aedc021e8610a90f467fb398d62c506",
+      "origin": "local-skill:analog-layout-lvs"
+    },
+    {
+      "path": "skills/analog-layout-lvs/SKILL.md",
+      "sha256": "56eafe842d127e4192355a54a8c13360de9532af1861c336c597709540ea687f",
+      "origin": "local-skill:analog-layout-lvs"
+    },
+    {
+      "path": "skills/analog-layout-macro-opt/agents/openai.yaml",
+      "sha256": "5d85b2ee23a5d0cdaa17de290f044597f8595ebb70468614e8c8e8543d24c041",
+      "origin": "local-skill:analog-layout-macro-opt"
+    },
+    {
+      "path": "skills/analog-layout-macro-opt/references/contract.md",
+      "sha256": "e40cb32515edd2d003bdb3925dbd24c2594a265e27f288552095d7b52e5751a2",
+      "origin": "local-skill:analog-layout-macro-opt"
+    },
+    {
+      "path": "skills/analog-layout-macro-opt/references/gap-budget.md",
+      "sha256": "448122271821d7cfbbdf35c051adc67040a4147a360221cc2146a2cc9e58d1b1",
+      "origin": "local-skill:analog-layout-macro-opt"
+    },
+    {
+      "path": "skills/analog-layout-macro-opt/references/materialization.md",
+      "sha256": "5b4e3039077357933414d58f03142567e5baefdd9c8cc8598b0338cf8f3b7a34",
+      "origin": "local-skill:analog-layout-macro-opt"
+    },
+    {
+      "path": "skills/analog-layout-macro-opt/references/research.md",
+      "sha256": "2fafac93e72a7c700447f2772bf68a5e321f6655b3bc788203b5e5a7d011a447",
+      "origin": "local-skill:analog-layout-macro-opt"
+    },
+    {
+      "path": "skills/analog-layout-macro-opt/scripts/macro_opt.py",
+      "sha256": "93e01c8cedb7de22cd4ca28fb33d778246bc676be787394bebc0cbe1b81ffd6b",
+      "origin": "local-skill:analog-layout-macro-opt"
+    },
+    {
+      "path": "skills/analog-layout-macro-opt/SKILL.md",
+      "sha256": "025d99f9d7a99693a8e013059ceb1a6ada8881d89a6539c5abedfc6f5d5c95c6",
+      "origin": "local-skill:analog-layout-macro-opt"
+    },
+    {
+      "path": "skills/analog-layout-macro-opt/tests/run_demo.py",
+      "sha256": "581821752eee52bbe729da2e13b7c41e0eb4ea125e006c18442033dfc7a58f92",
+      "origin": "local-skill:analog-layout-macro-opt"
+    },
+    {
+      "path": "skills/analog-layout-macro-opt/tests/test_macro_opt.py",
+      "sha256": "8978db03e1f2221beeb63b2c18ef0f111057a792ad95e3e89cbd307fb8822d56",
+      "origin": "local-skill:analog-layout-macro-opt"
+    },
+    {
+      "path": "skills/analog-layout-macro-symmetry/agents/openai.yaml",
+      "sha256": "9d07ee8e45256a3882eaf371156401c23e869dc8e07bb885c783bb6838f13eae",
+      "origin": "local-skill:analog-layout-macro-symmetry"
+    },
+    {
+      "path": "skills/analog-layout-macro-symmetry/references/contract.md",
+      "sha256": "a65c975d3899b79f284a9f27b37917629e21b286e16f333d50020e54ff28a2e6",
+      "origin": "local-skill:analog-layout-macro-symmetry"
+    },
+    {
+      "path": "skills/analog-layout-macro-symmetry/references/research.md",
+      "sha256": "cfb9d01551025d906948ee90cff30179985aa2dc4503fec68b1b02b977a3c84a",
+      "origin": "local-skill:analog-layout-macro-symmetry"
+    },
+    {
+      "path": "skills/analog-layout-macro-symmetry/references/routing-handoff.md",
+      "sha256": "447cb277bf5c5177d9ff4c2ea8d564d8e812c01c8c893d6251b505e4ea621519",
+      "origin": "local-skill:analog-layout-macro-symmetry"
+    },
+    {
+      "path": "skills/analog-layout-macro-symmetry/scripts/symmetry_plan.py",
+      "sha256": "c28aaac6941ff25813a61e679546a48ed2571aaaeb4af816cbb4279e4ec4e228",
+      "origin": "local-skill:analog-layout-macro-symmetry"
+    },
+    {
+      "path": "skills/analog-layout-macro-symmetry/SKILL.md",
+      "sha256": "16a3c0c24e75c4558b93ada4c35699c86a85ef06712c8a0d1e292e82f35c55ad",
+      "origin": "local-skill:analog-layout-macro-symmetry"
+    },
+    {
+      "path": "skills/analog-layout-macro-symmetry/tests/test_symmetry.py",
+      "sha256": "e9a656f1511550f8d2f9e3f081188f74b1faba45bd2c7982beedc08449eb3f93",
+      "origin": "local-skill:analog-layout-macro-symmetry"
+    },
+    {
+      "path": "skills/analog-layout-pex/references/measurements.md",
+      "sha256": "85d5885446c8b494fb43c6437e86b7ab12877b873e74745df5b7520f8d7be292",
+      "origin": "local-skill:analog-layout-pex"
+    },
+    {
+      "path": "skills/analog-layout-pex/references/site.md",
+      "sha256": "c64cc6e9bd7df6c13be06045b7804210079b7b39a26c91e5099a20d8ab465839",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "skills/analog-layout-pex/scripts/ac_metrics.py",
+      "sha256": "8fef4927044e5f1e75ae4a8278256fee562cac0dcc9123a66e1fcf07254a245b",
+      "origin": "local-skill:analog-layout-pex"
+    },
+    {
+      "path": "skills/analog-layout-pex/scripts/test_ac_metrics.py",
+      "sha256": "21fd521efaafa40f1d95fbecc48ca89d1ec3770536c93cc5787e6903868be1cf",
+      "origin": "local-skill:analog-layout-pex"
+    },
+    {
+      "path": "skills/analog-layout-pex/SKILL.md",
+      "sha256": "ec8a189050eee34c368d33ff5c0b52e8be1e80ad00b321732687ef4b26fe32af",
+      "origin": "local-skill:analog-layout-pex"
+    },
+    {
+      "path": "skills/analog-layout-place/agents/openai.yaml",
+      "sha256": "106887a2778158c0ba213ab6f5a80096b0f24d0d1f0df6d698ebe2e8efa3dec9",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/references/contracts.md",
+      "sha256": "3a652b889649b31a90dfa27d1915b69cb6891017d9c99800c4f0d9c1f7e57670",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/references/global-floorplan-review.md",
+      "sha256": "625bb6cf478885513214048876576db059f07aa10bc6a3f1be64f97824c1d789",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/references/optimization-contract.md",
+      "sha256": "be84bb8fea216e873c2120e81a79454d9e3df0efdf17e3457b99922d71e0b518",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/references/pre-placement-checklist.md",
+      "sha256": "905d43ad326f154444f16eae7b1041379a54af545c7d2fadc81eaf4485eeb839",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/references/reuse.md",
+      "sha256": "8857ae4b4ff371594f2f234e57f9313816bdc102989e6323562fb26d06978b87",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/references/shared-source-diffusion.md",
+      "sha256": "d0ab4879e87b45e29c58759c888533686d6106bb2ab21ba047ef21492beab02a",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/scripts/analyze_placement.py",
+      "sha256": "eb5eab8fb9b175ea8e78ab163175332d31b98bbcbf1d4b26defef850eaf819ac",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/scripts/apply_placement_intent.py",
+      "sha256": "1ff210d18a0eec924efe83d595b025a76fab4b3c0ace730bb02c9088552f1945",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/scripts/functional_groups.py",
+      "sha256": "556156b509335fb4038e3da71e7c61a0e2eeab00cdc08ce3600d5c465a0ac271",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/scripts/placement_candidates.py",
+      "sha256": "ecc19fd74102fc57827b18667c7c54102678af72bc3e237d1ad9ad1153883868",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/scripts/placement_flow.py",
+      "sha256": "af4927306d10a266c2549a02f63eac54718f041d6be60ae328ef07291adf6edb",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/scripts/placement_geometry.py",
+      "sha256": "bb4c20961c461a98d846caef4ed0d3f8482065fbc8fcebc32397302b6aa1abb9",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/scripts/placement_metrics.py",
+      "sha256": "23885956bd466240bc3545c337337cd042a93b4f83ee4471bf83df503035aaff",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/scripts/placement_optimizer.py",
+      "sha256": "939c5d5568b4c3f03fe9d93906738ff7203401ef72dc8997615a035aba778ba3",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/scripts/project_intent_metrics.py",
+      "sha256": "9fd4645dd0521c35dbe0ec0b92e08b7344f28fc54d22329449e3cc46b651a25f",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/scripts/refine_placement_intent.py",
+      "sha256": "c26fade29946bb510b632ba0a3a3d88aeafb69d31b90eb8429a138559f539feb",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/scripts/shared_source_candidates.py",
+      "sha256": "41f88e3a8ce597abff39cca73c3112b0802b084816351798506828bf22f7f2d6",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/SKILL.md",
+      "sha256": "386cfdf2f625b07d26c7e2810cc0c3a6dfd7c3e745a78f4fb96f17d84649e0f9",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/tests/test_apply_placement_intent.py",
+      "sha256": "dd847107924211c4aa43c52aa93380fa74a14fe6a8b7d84b4813354c51b69692",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/tests/test_functional_groups.py",
+      "sha256": "e51044df0ddc93c966d8888a0b07dca6eaa29edae8fa3cbd7109de4018f6fe44",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/tests/test_global_floorplan.py",
+      "sha256": "5790e184145327efb4a6ba516801418b165bb1bf2421394eb9c888727c576af2",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/tests/test_placement_closure.py",
+      "sha256": "ebcf2ccdb237c4f1eea34b9a671e90daee941d22119db11011b2c0c754645668",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/tests/test_placement_flow.py",
+      "sha256": "04c2a36a42596c4f66a4452d181217cf23d8b499c6405f1fba89eaa12e648427",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/tests/test_placement_optimizer.py",
+      "sha256": "200e29a7fca6294b04fb95b5f000c34424d0e8ebf3efb1e7c653b6250abb1194",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/tests/test_project_intent_metrics.py",
+      "sha256": "749616694a1687195af681eaf632137e0e818e47433381bac5c8e9a5840b2bed",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/tests/test_refine_placement_intent.py",
+      "sha256": "1f8b52fd0807ea106bd92b2e121c212686283cb3c7771554630ea9bd22f81326",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/tests/test_shared_source_candidates.py",
+      "sha256": "6b00e3ec19c069c9740334809afad0fe0350a256d579493633466b594330245a",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-place/tests/test_single_placement_transaction.py",
+      "sha256": "e733ac5b460014acda4ff48b75dae871fd43b6be0b8a9d0ed0fc2cf83a3b5fab",
+      "origin": "local-skill:analog-layout-place"
+    },
+    {
+      "path": "skills/analog-layout-route/agents/openai.yaml",
+      "sha256": "d51cc5959fecdfd9eb49a14e2225f33d418d6beae97513dfa833dfb651584b30",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/references/planner-contract.md",
+      "sha256": "f1c93389b587cbfee5dcc99d45d35be27bf6d0441a6a4faafe57e3649e2fad95",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/references/reference-layout.md",
+      "sha256": "7493acc53b54306c4d55b492184e581a59f0124454e9683699b122a1a9027666",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/references/routing-checklist.md",
+      "sha256": "dc62c402d1203ea42e6df3c4b32ef4e8712322728d84ffb6261110be88334c8a",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/references/routing-contract.md",
+      "sha256": "9b83514011f24b5f1db1907240216395af730a320cb9341d67859d02ab18a0c0",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/references/routing-practice.md",
+      "sha256": "4637bb42c7f78a452425d124ef438c3b764fb49ab59f03f1e7df65908e8b2cc6",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/scripts/apply_routing_intent.py",
+      "sha256": "6f6c2bd865244a00715c67ee392e2525bac31bbe68bb8461c64bd5b23003996c",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/scripts/compact_route_spec.py",
+      "sha256": "d0340afc04cb1716aba888789d654f1c1bebac49372db03e5c84d64713c4564f",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/scripts/compare_reference_layout.py",
+      "sha256": "0b39915f46b17e4a6a88d15ae184a28053d0e3693ddd412ce9258973f4ffd2b0",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/scripts/configured_route.py",
+      "sha256": "2358f809b4787cf59e3067a81635144813883db93b861f9c47586f02b38c3553",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/scripts/prepare_planner_inputs.py",
+      "sha256": "08b4aadffefda94e494234df15324db117938bbb66d09b86b9db65e6fac3d2f9",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/scripts/route_intent.py",
+      "sha256": "f32a21dabb61dec4df32ac584953f71d08d22c187d3b16bfcbd044ebe0b44b69",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/scripts/route_planner.py",
+      "sha256": "077dddd308d86adcf8ba07737d0b5836da27d2411a943f7dfec34d60b47da6de",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/scripts/routing_backend.py",
+      "sha256": "1ebfc76e5a90fdefb8d1c2ba6a71b5306defea7e5b2f5f13fbd88964ef50b790",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/scripts/routing_search.py",
+      "sha256": "2dbf8990dc3f7e73326c7132420290f7c01c975d6ca5fcaab735c5cc83ec0839",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/scripts/routing_tree.py",
+      "sha256": "7d837ed71b9edb9ef0f44e07c588d26de4bd61efc137680e18574ad24f7acb3b",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/scripts/svg_route_check.py",
+      "sha256": "62c6df60490b5a7bcb0761524ea8ef234f7a5d19fb794f27040a396b94de83cb",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/scripts/via_containment.py",
+      "sha256": "eb9d57bf2b819856ac52b4f94d713f9bbc67e2a5d7d1d4ff84dbc1f676180429",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/SKILL.md",
+      "sha256": "f4c2129c382140cde22dee10e6c649a5e52ddd8a9b01e5257772266a62421b4c",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/tests/test_apply_routing_intent.py",
+      "sha256": "d5b340032e23b71ca2037f436926e30c08f8140441bdea65827bb58fbddb69c0",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/tests/test_compact_route_spec.py",
+      "sha256": "b60ddd4df3d4d0cef3bd8420b4827198d7ed77a622a2e066f3cf96bd5af41cdf",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/tests/test_compare_reference_layout.py",
+      "sha256": "aab2229b139128bfdf4aac6ce1ad50230035a179c0a3e20f95004aa1cd73cb5f",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/tests/test_route_intent.py",
+      "sha256": "428f5624f9b921ad08dec91ea60893ddf0d5eface08dc690a64d2f2113e280a2",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/tests/test_route_planner.py",
+      "sha256": "8f06ec56e92b57b48507b8c26aa6369fe57a9127a0efc96b82f83349c48d0321",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/tests/test_shared_tree.py",
+      "sha256": "26d03cd9a26aca477af49567d0ed0487f96858d9281e5167d448bcbe2f238c95",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-route/tests/test_svg_route_check.py",
+      "sha256": "dd6d42b1c3c52aa830b5ef79cdb9c04c91ed4e35a0442033da7b37405ae02179",
+      "origin": "local-skill:analog-layout-route"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-fast/agents/openai.yaml",
+      "sha256": "0956e960613ef89496262cc66eb0f2632166167b2513ae1f5038e07568475dcb",
+      "origin": "local-skill:analog-layout-symmetric-fast"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-fast/references/algorithm.md",
+      "sha256": "232416ab051c27aa0cd166f2a749a4bd5a27735385335277da895085738b5edf",
+      "origin": "local-skill:analog-layout-symmetric-fast"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-fast/references/configuration.md",
+      "sha256": "a31156dc042ae7e7388083dc0d9a293fad6e0ebc2a48abff8b7a018519a0ef32",
+      "origin": "local-skill:analog-layout-symmetric-fast"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-fast/references/drc-constraints.md",
+      "sha256": "adecd548cc8449b5185073770a31ab929109d3b2f4b375ed7aff4e04fac3d991",
+      "origin": "local-skill:analog-layout-symmetric-fast"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-fast/references/reference-and-research.md",
+      "sha256": "ed2fcde777c02dd6fdede43f3ee3c338c66ae310e18347d483a20fd1542f8602",
+      "origin": "local-skill:analog-layout-symmetric-fast"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-fast/references/symmetry-constraints.md",
+      "sha256": "c93941d014ec128640b0041e4058728f4c396002d88a8686a1b8e5639cd2466e",
+      "origin": "local-skill:analog-layout-symmetric-fast"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-fast/references/template-contract.md",
+      "sha256": "1fecb680d936651c22fdf2babf3eed0d4e7fd1f406b8e9dc1cac6d406eab4375",
+      "origin": "local-skill:analog-layout-symmetric-fast"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-fast/scripts/fast_route.py",
+      "sha256": "c7a3762e7cd82fb226f740d2a3a5fdcfa252077b1c1d9aa74469caba9b8b3d1c",
+      "origin": "local-skill:analog-layout-symmetric-fast"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-fast/scripts/mirror_spec.py",
+      "sha256": "42aca2ef1a0b571639d1e147ae3619977f70c485cc8a5ade978a9ea65da90e32",
+      "origin": "local-skill:analog-layout-symmetric-fast"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-fast/SKILL.md",
+      "sha256": "e210a8fbac1d4bc91e172c67a210d7e0163b4053ec77921ced4488f1890af396",
+      "origin": "local-skill:analog-layout-symmetric-fast"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-fast/tests/test_fast.py",
+      "sha256": "1246a0f1e0f67add4d6f830430fd2cc2bea2dbea7249d1576db023cb58608c21",
+      "origin": "local-skill:analog-layout-symmetric-fast"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-fast/tests/test_templates.py",
+      "sha256": "40db9467d12bbc325ec8dbd2f86d74be3b81ed5cb3810a8f35cf6560c2deacb8",
+      "origin": "local-skill:analog-layout-symmetric-fast"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/agents/openai.yaml",
+      "sha256": "d1e8e1d2af26d3be3c2c2cb06efee531f67a6ebaa4dca0af788498aaf44f3523",
+      "origin": "local-skill:analog-layout-symmetric-route"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/references/algorithm.md",
+      "sha256": "0df727d230a6b58fe109a62a40853f08c579e6ccdcc580f095f0a7ad7cd921b1",
+      "origin": "local-skill:analog-layout-symmetric-route"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/references/drc-constraints.md",
+      "sha256": "adecd548cc8449b5185073770a31ab929109d3b2f4b375ed7aff4e04fac3d991",
+      "origin": "local-skill:analog-layout-symmetric-route"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/references/reference-and-research.md",
+      "sha256": "ed2fcde777c02dd6fdede43f3ee3c338c66ae310e18347d483a20fd1542f8602",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/references/solver-contract.md",
+      "sha256": "0cc7881532a5b32c67db30e9b73b7d87269a70a6adc9549acf09990c24fb249c",
+      "origin": "local-skill:analog-layout-symmetric-route"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/references/symmetry-constraints.md",
+      "sha256": "c93941d014ec128640b0041e4058728f4c396002d88a8686a1b8e5639cd2466e",
+      "origin": "local-skill:analog-layout-symmetric-route"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/references/template-contract.md",
+      "sha256": "efe0acf1d1c7f1c32a8d5f1c3e219b2a4d3e7f6fe9dcc9111305c9e9707ada0b",
+      "origin": "local-skill:analog-layout-symmetric-route"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/scripts/mirror_spec.py",
+      "sha256": "1a2ca16d3789e18d93453b38ee7836611776a29b48b72080e65cbf46bde03a85",
+      "origin": "local-skill:analog-layout-symmetric-route"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/scripts/symmetric_artifacts.py",
+      "sha256": "da5d2d794fcc32ec99c8075f394998e47e26af919fb2b679d5a92adfd5624786",
+      "origin": "local-skill:analog-layout-symmetric-route"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/scripts/symmetric_audit.py",
+      "sha256": "d83445f7314861c45c532a7253863730adb2b0e1ba3e170ae1a1ef215392d587",
+      "origin": "local-skill:analog-layout-symmetric-route"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/scripts/symmetric_geometry.py",
+      "sha256": "d28cf0e1a4a990ea523b3abd827f1342a180dd8da345867390f20cc2fea0e4e7",
+      "origin": "local-skill:analog-layout-symmetric-route"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/scripts/symmetric_search.py",
+      "sha256": "5e50e4f46b5ee610ff16ee0f2852227c71c4ece243537732c0d0d6b86e18d78b",
+      "origin": "local-skill:analog-layout-symmetric-route"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/scripts/symmetric_solver.py",
+      "sha256": "0acb69222950870b43fb6d2939edf144bdfb135e438fa0db45908ae7d5a18f0f",
+      "origin": "local-skill:analog-layout-symmetric-route"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/SKILL.md",
+      "sha256": "1e58146ab75b86fc303e271884de41eb2a25b7eafeba7e8bba5bef5e38cc52bc",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/tests/test_symmetric_solver.py",
+      "sha256": "edc0c292771fb0279a763efd7b744ca31fbac166c0e3e42e9e537fc9a42a0d94",
+      "origin": "local-skill:analog-layout-symmetric-route"
+    },
+    {
+      "path": "skills/analog-layout-symmetric-route/tests/test_templates.py",
+      "sha256": "1c9209c59a51195b9b1f17052d0c85958d8a3568ea7d73d83d18832e52b233c0",
+      "origin": "local-skill:analog-layout-symmetric-route"
+    },
+    {
+      "path": "skills/analog-layout-workflow/agents/openai.yaml",
+      "sha256": "e7aec51e91e9f297563e1b174f931962122d78030dcb1b4f9011d74b5709a9d3",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/references/checkpoint.md",
+      "sha256": "b2d83439f65a66f70be0dcf059fa0857b6806ade61de4c89cb43ca27548850a9",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/references/dispatch-efficiency.md",
+      "sha256": "46994a105bc04b044af9175694deb84a899d02c649543c4b2d2a9d35ac87c4c1",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/references/project-configuration.md",
+      "sha256": "56594c0f725ace046d773e2fb4918577a20282154129aa5bcd2955c7e0bee0fa",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "skills/analog-layout-workflow/references/runtime.md",
+      "sha256": "742093608982da2c76301f9bd15222e887628bc0912fb5f068c79f44a4b578ab",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "skills/analog-layout-workflow/references/save-policy.md",
+      "sha256": "a6fd580456ed1d5ca0b48f56e483ff60bf12e138e2a602f2fedccad9e71b6f18",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/references/stage-contracts.md",
+      "sha256": "3d4a1195e0fec1dc81d1cc933f19ad6c558be5aaa18e69db6f0f81029dc3fcaa",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/references/stage-writes.md",
+      "sha256": "f1ed92ac84a3a4d9e5c1f5ee172966d5b3bce97e4715837ad9bb84e9f675b373",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/scripts/adapter_runtime.py",
+      "sha256": "343cdb3adedd2cefd74f12ab62c751af91b1c0feb917f8e81726231be29e3e56",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/scripts/configured_flow.py",
+      "sha256": "5097a79f1dc36ca4d311db97a3a46826d2ac7220235ce12b263ee9cad6648040",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/scripts/dispatch_preflight.py",
+      "sha256": "7f8aca811116aea232f6579c7ad79aef5194becac9104ae612eecca97c57a7ff",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/scripts/project_config.py",
+      "sha256": "8b27a2054002fc56271af4e2689abc96ddf66a0ee1989ef9ada4373c6b9a5dba",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/scripts/run_stage.py",
+      "sha256": "5d6208fa01a3eb83ec5e2242aca9c20a7e83933b72654c55dcd2c3daf87b3d09",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/scripts/site_nuvoton_check.py",
+      "sha256": "efd4aa414374be877583328ad96135e481a8663c03e740b42010cca1880eb054",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "skills/analog-layout-workflow/scripts/site_nuvoton_remote.py",
+      "sha256": "1751873a0587ff8c23b9d26ae7249e5e070c101341aeb2d40e13b48be7dc8a4f",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/scripts/virtuoso_adapter.py",
+      "sha256": "fc10b7142d6cfa506b937214ed2bc614a59c00fca5ce0969544ba424aa0f600f",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/scripts/workflow_runtime.py",
+      "sha256": "f1ec8f7718183cff3bd4240c49b23205dd76fca08b09a2bb124e9b8d213fd274",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/SKILL.md",
+      "sha256": "d4f77cfdaded9c94992c2a8d36aa938650b3d8a9dec9b7d0334835843af72074",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/tests/test_dispatch_preflight.py",
+      "sha256": "0d4deb722afe98caac4f3bbe3175b93d7f388404e0c647053f84a1aa2d9bdc01",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/tests/test_fast_frontend.py",
+      "sha256": "35dba6721dd1d4c16aee696b1d93ba40b4fa40f44ac924cfbff4fdbf99fb6c66",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/tests/test_performance_opt.py",
+      "sha256": "229a6ca55f5a26d4a183c2f47d90fe206c7fe6b9a043465a5f5ab97dbf10a085",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/tests/test_project_config.py",
+      "sha256": "c6e7ee608ab3da57886ada577ab26e4ff1de2788e54d80bf206ecef51afe369f",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/tests/test_runtime.py",
+      "sha256": "3f49e89284d7d428752cfdf1ce5f2f973c5d872628665db9ed7a47c18c14f1fb",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-layout-workflow/tests/test_stage_batch.py",
+      "sha256": "fa4c48418e38c54717f2e4da3e1edb54da21ce500288468e253819d3422253f9",
+      "origin": "local-skill:analog-layout-workflow"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/adapters/__init__.py",
+      "sha256": "14bcf15d841cd394c2853f72fddac4991c832c3ee7efbbbc92f3a422e41ee45a",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/adapters/_util.py",
+      "sha256": "6dd54e543c659517b13e3b5e0dbadec5cbe2b579a18a5192318eabdb946971eb",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/adapters/mrpp.py",
+      "sha256": "24d19c531f7e04d5abf8bc4eb78be4c7c023c3a118a917c96a226f60e2c0c4f4",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/adapters/spectre.py",
+      "sha256": "9a68cefdf267855984ae9b07d273362ca4990aea3d9b4eecb5c71634d53391a0",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/fixtures/f1_rc_ladder.flat.scs",
+      "sha256": "643c98a8a23edde59f0ed2dea86c36735968ce9844f8b29c1f0131ae8570ecab",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/fixtures/f1_rc_ladder.mrpp",
+      "sha256": "7a1e3e62d5bfaba77937aa80c3a43071e522f8e6a6e6939aeef3b306b83ea3b7",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/fixtures/f1_rc_ladder.subckt.scs",
+      "sha256": "a6c333540538b49d9c03c30f519e8985361153c9820f846dcac52dc9593fb0a0",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/fixtures/f2_diffpair_cc.flat.scs",
+      "sha256": "b438ef5436a15e85a7033f02a60859e7f74242ccecf3778bac4f84d7abe025e9",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/fixtures/f2_diffpair_cc.mrpp",
+      "sha256": "637c20c8d4172515fb942dbea449d207b59254962cfb26ed89280d1e678f4f04",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/fixtures/f2_diffpair_cc.subckt.scs",
+      "sha256": "9803618e3357be6f584d4f9c3ec6f98abc31d5d4c17bb615225cc0ca22ab0a27",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/fixtures/f3_series_parallel.flat.scs",
+      "sha256": "47c2c1df11df7c4338017c961f4e102b38882141b72aebef393d37706ff9d8a1",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/fixtures/f3_series_parallel.mrpp",
+      "sha256": "17664ce24bd94e9d1754559e2a5e86301c9f0d770e6760343a28dc5b14496da9",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/fixtures/f4_within_net.flat.scs",
+      "sha256": "93177461e1260f02ce3703433167579e2a81cbbfa98b5a18aef4f8e66a4f63d3",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/inject.py",
+      "sha256": "fa98a31d2a6a575f8087498b2cfc4e959d5c727d7ab5fb94f2290af9dd4efa20",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/ir.py",
+      "sha256": "981ff16de961185e42753de2738d52edcf14fb37d0e947ed880751f568c6b017",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/kernels/__init__.py",
+      "sha256": "ab3df0dfad2fe2d16089b00c886ef84d859a7d9fdb0c6a2542ae670719993913",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/kernels/cc.py",
+      "sha256": "2515d58fc3a51bc1945b435e13c02317e775569d042c62376adc8eee730113d1",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/kernels/cg.py",
+      "sha256": "9ee4e7221f3fbca615e7383330b431ed3f5df97c3e61929a05610cdb1d80d959",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/kernels/mor.py",
+      "sha256": "05d6b4835ba675ce2fcbe49d52bc6dc37ab4351e7f930824c4d41cdd2b1193db",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/kernels/r_network.py",
+      "sha256": "55d1d16bef875b1bc946daf51c3a17f983a7c908f852dd44c866141e532b1092",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/md_to_pdf.py",
+      "sha256": "d50d0232dee78f8360972be4334c373b54640c7987bd92411fec0a5c773200ea",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/parse_cache.py",
+      "sha256": "fe8d4f6e2a1bc63fa4070dfa77878134e8269ae38a434b2999982e6bc19abe40",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/prescribe.py",
+      "sha256": "2004d0512d9e55d857166b38a08f4e6e8d2fe1163833db860053a16ad038d0a2",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/report.py",
+      "sha256": "cc2ab826f8d87f9d7ad25b4670d3ff0bf8ed192662e925d374fab9ae2c506492",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/scan.py",
+      "sha256": "accb9474f7a8dd6e0db6997a72a2345c0ea2a7f2507779c3818553a6c566064c",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/strip_parasitics.py",
+      "sha256": "26872df070cdf9e6ab86749ba921a19bd7d432754a8742a1ab6886d1d4d17f3d",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/sweep.py",
+      "sha256": "70cb34b13f6f1993cea1e57485d7a47b811e0d447cb4b630a5ee4f18bf13caf7",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/scripts/test_all.py",
+      "sha256": "f1cac38e8569e72bacb03ed659a4c228e7bd5f05ec0720bccf2a696964035f10",
+      "origin": "local-skill:analog-netlist-crawl"
+    },
+    {
+      "path": "skills/analog-netlist-crawl/SKILL.md",
+      "sha256": "5adee80c1bde3dc9ddc3506b0b1601b4d12832acfa75e2f19528c3585ddb76ce",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "skills/analog-pdk-profile/agents/openai.yaml",
+      "sha256": "d4c738da0421cc1c7bac6ef6bf623d2d647df6bf41ec97abe15cea2fe8ed1a98",
+      "origin": "local-skill:analog-pdk-profile"
+    },
+    {
+      "path": "skills/analog-pdk-profile/references/profile-contract.md",
+      "sha256": "d534f7008cae48ea5a711153e63ecfe128dd14fee86d6d1307249193376393ff",
+      "origin": "local-skill:analog-pdk-profile"
+    },
+    {
+      "path": "skills/analog-pdk-profile/references/reuse.md",
+      "sha256": "5d5c4faa3fb3dbf59e65fe558228ab0992edb064ee743ad21e8b6603a0528d29",
+      "origin": "local-skill:analog-pdk-profile"
+    },
+    {
+      "path": "skills/analog-pdk-profile/scripts/pdk_profile.py",
+      "sha256": "d4370d715f3a61f6db7785d9ee95ce56eddd3d531ea4254d80940eefbd3c1706",
+      "origin": "local-skill:analog-pdk-profile"
+    },
+    {
+      "path": "skills/analog-pdk-profile/SKILL.md",
+      "sha256": "4d88081c18a2e5d265d8d276e4892525e5caefaaea5b2a302d64de03106dcaaf",
+      "origin": "local-skill:analog-pdk-profile"
+    },
+    {
+      "path": "skills/analog-pdk-profile/tests/test_pdk_profile.py",
+      "sha256": "e40161697cc81dd84be0dc63c068e16b128966852825a917f95d7ddb181b41e2",
+      "origin": "local-skill:analog-pdk-profile"
+    },
+    {
+      "path": "skills/analog-pipeline/SKILL.md",
+      "sha256": "900c3613a69454dcc8e3300c3ad4bc92a05db3b67f3b86a17618d982af0290a2",
+      "origin": "local-skill:analog-pipeline"
+    },
+    {
+      "path": "skills/operate-virtuoso-bridge/agents/openai.yaml",
+      "sha256": "527ccfc86e566ab3393c7612487c00223100fd2c541a06a7d4ced45f76d97340",
+      "origin": "local-skill:operate-virtuoso-bridge"
+    },
+    {
+      "path": "skills/operate-virtuoso-bridge/references/environment.md",
+      "sha256": "975fabef81f246fd6f604aa38301e3067c2d19eec6130b7a101681c696628f4c",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "skills/operate-virtuoso-bridge/references/operations.md",
+      "sha256": "5acab6f837d1704b6af4c8db03ade92381bb8cf0863ce1cb3d25a5747f2b87d2",
+      "origin": "local-skill:operate-virtuoso-bridge"
+    },
+    {
+      "path": "skills/operate-virtuoso-bridge/SKILL.md",
+      "sha256": "e6a768dc743996155c91fba37a246e51d3de8ca691866d5fb33636a85e9b33ef",
+      "origin": "local-skill:operate-virtuoso-bridge"
+    },
+    {
+      "path": "skills/virtuoso-layout-practice/agents/openai.yaml",
+      "sha256": "359d5245aa347a4c2ceee42515296cc2802d54fac12c8f307c8b59f4943aa059",
+      "origin": "local-skill:virtuoso-layout-practice"
+    },
+    {
+      "path": "skills/virtuoso-layout-practice/references/layout-guidance.md",
+      "sha256": "cd9555ba82745188e169aae430da0e4152f0a8ce5ae1d89bc54faca1369f1a07",
+      "origin": "local-skill:virtuoso-layout-practice"
+    },
+    {
+      "path": "skills/virtuoso-layout-practice/SKILL.md",
+      "sha256": "fbfaac12a1ab27a7373b201c53aace494877cfa7768288c5847e74031353fe40",
+      "origin": "local-skill:virtuoso-layout-practice"
+    },
+    {
+      "path": "src/analog_layout_workflow/__init__.py",
+      "sha256": "667d4a15b970b851e20d17510224670c14646cfb6d5a1e388ca6b9cc6da8bf41",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "src/analog_layout_workflow/__main__.py",
+      "sha256": "79ee6f134c5c5193377cf9b189cbdcc3e2095e49ba9cec310114441c15a917c4",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "src/analog_layout_workflow/cli.py",
+      "sha256": "56a7999678649063be89d781f1917507a5aca33a05c0b8186077ef60cc15cb4f",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "tests/test_repository.py",
+      "sha256": "283caa3e30f5c1132a2fe8c35625b83db4a03929e0981a7a9ffc5cfccedb81da",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "sha256": "170c8ce46800c1513b486098d037aa7e976019b8efb10b44fc4fedd35e7486b0",
+      "origin": "repository-maintenance"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/docs/superpowers/plans/2026-04-09-dismiss-dialog.md",
+      "sha256": "c23b06eb4c1d899fa3ac470108b034139b5adacb216622ec81b1981b9c090d0b",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/LICENSE",
+      "sha256": "3aa2448af5968ffe6c5675414ccc741b9c1b76ccce793223badc14e1688b6997",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/pyproject.toml",
+      "sha256": "71d0ef01430fb03d06bc0f81f85ae1fdba5dcd2f60ffb1eb83a443f8417a7f90",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/README.md",
+      "sha256": "16c16c3b2640d2103b236272e46c0a5e6fc238d3f7bf0195ed63ec96a0b40e6c",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/scripts/track_traffic.py",
+      "sha256": "39fcc8090c8d6f4865bc13d12cd322c423ddcf773325e6e65e5d8433578c19da",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/__init__.py",
+      "sha256": "f9939aed895cd85baf6b1f5bdc8e6f02be1999e612783088b06a5fab6408cdf8",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/cli.py",
+      "sha256": "d0cff85be861b807ab65649af910bde9b0451a289615a2cfecb0d9ddf6a63fa2",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/daemon_guard.py",
+      "sha256": "1b411bfa8ceebf9053ddc9065f58de6043c7d550fdb5cf39f85b3c04438e4efa",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/env.py",
+      "sha256": "dd5b123bca92ea50a84a2f14487c06c3f724a01e3d4da0d4009426c9a945b993",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/models.py",
+      "sha256": "39108559fded816cbd8c14efb9857ad2bafb64a13217efa6eef2fda244fb0765",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/profile.py",
+      "sha256": "6f1bb900d32dc9d90d01bac8743ccdd32d062a82a1a81cad159efc3d2d6c531f",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/resources/__init__.py",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/resources/x11_dismiss_dialog.py",
+      "sha256": "ece29468ed51f9969cd0664552dbe8c1c381d10f6c1256db299479c975469f88",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/runtime_paths.py",
+      "sha256": "6c39e58f61fc265b60d17c586a712349668dfcd473a9327fbd059acc669c65be",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/spectre/__init__.py",
+      "sha256": "e1feb447d089ea108ee7b521713c2b8085d1950b665145c1fb2bbe044e8c9855",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/spectre/parsers.py",
+      "sha256": "679ce4a8f71d4763b733f214c4bc9783a5fa6ad65b173e0e088a8223fdd79c40",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/spectre/runner.py",
+      "sha256": "772628fc24a96476dd7d1baca54aa0597a43aeb6d46b9cbb274c6f12afd3f520",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/transport/__init__.py",
+      "sha256": "a4b0478d5786f1d523ae97043f51aa98e7a416ecdfccb361a172733be56771ac",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/transport/remote_paths.py",
+      "sha256": "e00acd7a9a7d4673cae744cd1a9eb1e4ea439d85800e7f686d1d6b8ac8529549",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/transport/ssh.py",
+      "sha256": "96d64f243d50beba59801e2169b74feb55c61a8b52f7dc37ed792605c242f2cd",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/transport/tunnel.py",
+      "sha256": "8a07b0e26b2560f6ca6cc7d8301709d07787610df25f71860e168b87f0a54d4a",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/__init__.py",
+      "sha256": "e086a8c8a4933d3e1d4ab32789c8694d13e8ddce278a9fea2612e33271d249a1",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/basic/__init__.py",
+      "sha256": "21a952a15df5bbe244873693091bcd710a4d86573acf57f67ff11c76ea37595d",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/basic/bridge.py",
+      "sha256": "d44c50cdedfddaac2181d0f5ae9d16feda32b330db2b1e4a9b5c8b38c7f5e071",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/basic/composition.py",
+      "sha256": "3ad2802ea4670de6192f5b9c584098a770614a201fcbc4dd087f166bc464e596",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/basic/resources/__init__.py",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/basic/resources/ramic_bridge.il",
+      "sha256": "1db9e9ea83cbaae003a12046a67481b7face3109ae0a8ccf1faa1437b4082285",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/basic/resources/ramic_bridge_daemon_27.py",
+      "sha256": "5049062a4c977fd70aee706d2560818866ab917d3c96f8440e87a0025bf30a4e",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/basic/resources/ramic_bridge_daemon_3.py",
+      "sha256": "e5cbac06de17022a0e629d32af677362bb854b7639c1540238619f8e1558c6cf",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/docs_search.py",
+      "sha256": "62d9b9bee6ed2483598a63c6f0f13eee20c72d9c5a6704d88abf7836281b7986",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/editor.py",
+      "sha256": "99bed33f0cfcf5f7743c5b5d06ac16380703e9d9d12483588b9ed616c41f3178",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/layout/__init__.py",
+      "sha256": "42c20e755d669f5c9d31ff2cc57974dd34194a0c6dd4348e43c24a6a07c29b82",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/layout/editor.py",
+      "sha256": "36cbf6968c91a93978d7de6af640d6083e1bd53ccd907a4815a8dc4da8e17d68",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/layout/ops.py",
+      "sha256": "1342d6185a5c3d39d275b01e87df85d4d90f90fc5df03d571266fc1c0cae1492",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/layout/reader.py",
+      "sha256": "747efa4460bb7503936fe58140b34d88e6f1886bbeb189e14d5bcf5f83ce54b5",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/layout/streamout.py",
+      "sha256": "abe60c248d4d31517b055391bd7499a95f742c93c94fdfbdb4eb986db8c401b1",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/layout/xstream.py",
+      "sha256": "b9d9160f234264987c83c562bc9999e9ecc6dd952df85a57123b3289881f8cd0",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/library/__init__.py",
+      "sha256": "139cd35fd26c8337e44f9d6dc56db2e27c92bd71e23e8eb28ba5f93b70582648",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/library/category.py",
+      "sha256": "e71a9702f4a1fb45c71daedda92c4bf24100ff550f1dbf5c12248e4f22886447",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/library/management.py",
+      "sha256": "f170c8852960f1ac0c6ffe25560d8241bd5774544e18f6dafda8b0566a048117",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/maestro/__init__.py",
+      "sha256": "90184b935f751dd70afdf237b23d5086bf5c92c69cda77c7bc6ac8ebd7bc2ca7",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/maestro/lifecycle.py",
+      "sha256": "a3596932d6f1866e68027074650354649c869b0da92b4f1e8e38936919fea310",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/maestro/ops.py",
+      "sha256": "a83f1fb3b4485065ca6d8bfd325fa4f15c426cf45f74a650ae7876f02ea7174f",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/maestro/reader/__init__.py",
+      "sha256": "bc16ebfd1d1df3dc1f2e0917c0d663b041f9fb5a86c799f452b9e28c8ff37725",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/maestro/reader/_parse_sdb.py",
+      "sha256": "a4e0559cce6d0007ec0d55f673c8a41ec7db206599cb07ceedccac0c386b4800",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/maestro/reader/_parse_skill.py",
+      "sha256": "06bbae6a463a5a5cf8ab54aeea1a03ffed9e67ae259ff535f18c0ca18a9737f2",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/maestro/reader/_skill.py",
+      "sha256": "374e87bf22fad0b4e516dbd1d6ae24e57a2c634434579584f59818789f5da8e3",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/maestro/reader/bundle.py",
+      "sha256": "49a3f9904fff564186b65bf45c65eed4d9ed9ca1104604504f6463a422f30296",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/maestro/reader/runs.py",
+      "sha256": "55298cecead3e301c8ce6d6e216ac8ea807f12ef29efc5b58271dd5ea9218cda",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/maestro/reader/session.py",
+      "sha256": "95d6893ef7c655fd2847e1a4d10a0e342e8791f1c78b29df58c63118bc3a31ce",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/maestro/reader/snapshot.py",
+      "sha256": "ebcce41493c8717903f6ea1fbce0bfdbd5dc92291fa5e6489b077b65c933c655",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/maestro/waveform_viewer.py",
+      "sha256": "a6903151ef025fb10d727c3e485bd5c62dea6aa07fa3da88ca8003ddffad4345",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/maestro/writer.py",
+      "sha256": "ca542b793bbe4425dd3d218dc94f50770418e5c3c46c378141defa54d710f7c7",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/ops.py",
+      "sha256": "894da24642012ac830357333e4d52335cc87c3efba843d3074434e2359adce56",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/response.py",
+      "sha256": "6bd412ea19ed12e5168193edff7897beb876510aa7f660ae61ae0cdca3666da9",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/schematic/__init__.py",
+      "sha256": "fbcd0f2cecb991c7e0cca804744e00d72f20b05031817180160016f8c59a837e",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/schematic/editor.py",
+      "sha256": "b90ed26591325d033e7d17123e7ae027cfff1139a571aebf7c7ae610349cf6af",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/schematic/netlist.py",
+      "sha256": "73712919cbd404003b4bf63c25f5401d69e03b5c1ccb1a98d974376dfe1df9cd",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/schematic/ops.py",
+      "sha256": "67004570fe99d71683452276d11ce3df00011ecc9d1629e920c36141da57e08e",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/schematic/params.py",
+      "sha256": "4413c7c7707124c07766ab03761a4c030159beb1e079db37bf8cacb2f755b333",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/schematic/reader.py",
+      "sha256": "dd1a99d6101302ea6ba2109d203fda4a02073935b5f6ae8b48efd6f591da7133",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/skill_finder/__init__.py",
+      "sha256": "b95997b7fb250ad3119b64948fc0438f2392a1238663d8f0d7043ce2cfa5d229",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/skill_finder/more_info.py",
+      "sha256": "869f60bcd6e4e17ab06d72bd3bed34738d2a3b001031f66e2248ee78cc0e3cee",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/skill_finder/parser.py",
+      "sha256": "138556cd11297244c30911008ed7a5f4185e4d492f3b8caf7ef0a8ed8b09b775",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/skill_output.py",
+      "sha256": "55b5e2c890ba755dc10243b308c44fe727573f6ad5b3412499bae9612be301de",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/snapshot.py",
+      "sha256": "52a7dacb900d238025665126986bc15c4c1b2c7351c7584d7ea2a02f7c8b3f5c",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/symbol/__init__.py",
+      "sha256": "ae53b8bfe5fa49656d935a0eeabd37c3df8003abb826011f561b430eac522062",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/symbol/editor.py",
+      "sha256": "1c23550863c1d252dd706021ccaa21392a8018b17da960821a11830a5e6932b8",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/symbol/generator.py",
+      "sha256": "10fd1ebf81378d74d451682037d0b8673ef371e37dc91632af7491cc8be76a99",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/symbol/ops.py",
+      "sha256": "e968721e8070fec48879381a2ef565769d840ddace02c4d2f5f1be3d98da359a",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/symbol/reader.py",
+      "sha256": "8c69c0e71e6e31d35111ad2d8f5fdb1c758520a2767557be0c92fadbb6a10cc6",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/visio.py",
+      "sha256": "de9c55cc0755c9c6da8591789e670b32b07f96805f581b61a672cba0a6626436",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/virtuoso/x11.py",
+      "sha256": "f34b7c042969d31a1c2ba5506a28639e66fc2ce1e8415e2a835f7a9571fe512e",
+      "origin": "vendored:virtuoso-bridge-lite"
+    },
+    {
+      "path": "vendor/virtuoso-bridge-lite/src/virtuoso_bridge/wrappers.py",
+      "sha256": "666b4a8f9b574e44acdf0145bf3a63a035462847158b0f8d1f9d462e93c95818",
+      "origin": "vendored:virtuoso-bridge-lite"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fast Symmetric Routing"
+  short_description: "Build mirrored routes from configurable finite templates"
+  default_prompt: "Use $analog-layout-symmetric-fast to generate measured, configuration-driven mirrored routing templates and validate them before any qualified layout application."

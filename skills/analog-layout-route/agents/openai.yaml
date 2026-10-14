@@ -1,0 +1,4 @@
+interface:
+  display_name: "Analog Layout Routing"
+  short_description: "Validate routing intents and apply qualified routes"
+  default_prompt: "Use $analog-layout-route for explicitly selected general routing or shared validation and qualified application of fast/joint candidates."

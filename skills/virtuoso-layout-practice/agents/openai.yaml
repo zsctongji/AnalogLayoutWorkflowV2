@@ -1,0 +1,5 @@
+interface:
+  display_name: Virtuoso Layout Practice
+  short_description: Run the virtuoso layout practice stage with verified inputs
+  default_prompt: Use $virtuoso-layout-practice for the requested stage, preserving
+    PDK evidence, circuit intent and revision-bound checks.

@@ -1,0 +1,27 @@
+---
+name: analog-layout-local-access
+description: Plan and verify PDK-qualified MOS gate/source/drain/body contacts and short local M1 escapes before guard rings or global routing. Reuse measured existing access; preserve dimensions, nets, sharing and declared symmetry. Not a global router or signoff checker.
+---
+
+Follow [save-policy.md](../analog-layout-workflow/references/save-policy.md): by default, every stage updates the same working `lib/cell/layout`, with save and readback at the end of each stage. Create stage-specific targets only when the user explicitly requests staged archives or Save As. Legacy clone-only/absent-target limitations do not authorize automatic archives; retain candidates and report a capability blocker when no qualified in-place transaction is available.
+
+Follow [stage-writes.md](../analog-layout-workflow/references/stage-writes.md): planning and candidate checks do not write to CAD. Collect the complete stage object/shared-chain/move list, apply it in one batch at the end of the stage, save once, then perform independent readback. Reads must not implicitly commit pending writes. Reuse valid live qualification and unchanged evidence.
+
+
+# Local contacts and M1 access
+
+Complete legal contacts and local M1 for every actual G/S/D/B pin island without expanding into global routing. Handle dummies according to their actual nets as well; do not connect them to adjacent different nets. Preserve W/L/m/nf, shared active/cont, modules and the core axis.
+
+Automated dispatch calls the verified Virtuoso built-in via API directly; this site uses `dbCreateVia` and the PDK's `PO1_M1`. `scripts/native_gate_adapter.py` provides a gate-access dispatch entry point and complete native-via readback. Its current capability replaces already verified rectangular gate-contact geometry with native vias. New gate islands lacking contacts still require planning and verification of poly extensions, landing positions and short M1 escapes before using the replacement adapter. Interactive operations may use hotkeys; read the bindings first instead of hardcoding keys. At this IC618 site, `O` is bound to `leHiCreateVia()`. See [native-via.md](references/native-via.md) for interfaces, capability boundaries and readback.
+
+Read [contract.md](references/contract.md) and assemble the complete live source snapshot, actual pin islands, current PDK recipe/rule files and explicit access requests. `scripts/local_access.py` is a rectangular candidate/checking kernel. When using native vias, record and verify their actual generated geometry directly; a rectangular plan is not a prerequisite for invoking a hotkey. Existing contacts require evidence of conductive continuity: metal covering poly alone does not prove a contact exists. Every pin island must have a result: reused, candidate or blocked, without silent omissions.
+
+Obtain rules and geometry from `analog-pdk-profile`, actual PCell/site probes and the foundry deck; unproven conditional rules remain UNKNOWN. Generate candidates first, then check cuts, upper/lower landing enclosure, grid, same-layer spacing to foreign nets, local length and complete mirrored cut/metal geometry. The generic rectangle kernel checks only rules expressed in its inputs. It does not interpret arbitrary foundry conditional rules or support nonrectangular conductors; do not substitute bboxes for actual polygons.
+
+Legal access may reuse existing contacts/landings and add only the escape. New contacts require explicit lower-conductor identity/net, recipe upper/lower-layer and cut data, and qualification evidence. Do not infer the B net from substrate type. Missing body islands or continuity proof block that item and require handoff to the controlled guard-ring/body-tie process.
+
+For live writes, prefer site-qualified native Virtuoso via operations, through interactive hotkeys or bridge calls to confirmed native commands/APIs. Write rectangle primitives through the unified bounded adapter in analog-layout-workflow; an adapter supporting only rect-create must not claim native-via support. Reuse the explicitly identified current working layout by default, preserving controlled operations and readback scope. Use a new target only for explicitly requested staged archives/Save As. This stage does not change PCell parameters, move devices, generate wells/guard rings or create external ports. Require per-object owner/id, fresh readback after save and contact-continuity checks. Associate native vias with their roots and record all actual cuts/landings; an array bbox cannot replace cuts. Output actual access envelopes and gate-contact-review for guard-ring use. A candidate plan or successful hotkey invocation cannot directly become true in the review; a qualified verifier must produce it.
+
+During creation, status is CANDIDATE/SELECTED_RULES_PASS; after saving and verification, it is LOCALLY_VERIFIED. Report complete foundry DRC/LVS status separately. Stop the corresponding writes for unknown rules, missing islands, wrong nets, nonmirrored geometry, drift or unqualified capabilities.
+
+By default, do not add auxiliary `conopc` shapes for newly constructed contacts or guard rings. Enable them with `include_conopc: true` or `--include-conopc` in the corresponding generation script. Preserve shapes supplied by native vias/PCells, and verify actual cuts/landings and connectivity. Record the DRC impact of omitting conopc from the actual reports.

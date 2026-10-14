@@ -1,0 +1,4 @@
+interface:
+  display_name: "Analog Layout Workflow"
+  short_description: "Coordinate reusable placement, routing and verification stages"
+  default_prompt: "Use $analog-layout-workflow to coordinate the requested layout stages, defaulting to fast symmetric templates when no routing method is selected."

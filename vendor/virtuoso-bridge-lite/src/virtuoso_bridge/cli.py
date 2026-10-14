@@ -1,0 +1,3645 @@
+"""CLI entry points for virtuoso-bridge."""
+
+
+
+from __future__ import annotations
+
+
+
+import argparse
+
+import concurrent.futures
+
+import os
+
+import re
+
+import shlex
+
+import time
+
+from collections.abc import Callable
+
+from datetime import datetime, timezone
+
+from pathlib import Path
+
+
+
+from virtuoso_bridge.env import default_user_env_path, load_vb_env, set_runtime_env_file
+
+from virtuoso_bridge.transport.ssh import SSHRunner, remote_ssh_env_from_os
+
+
+
+
+
+def _env_template_path() -> Path:
+
+    return Path(__file__).with_name("resources") / ".env_template"
+
+
+
+
+
+def _parse_user_host(s: str) -> tuple[str | None, str]:
+
+    """Split ``user@host`` or ``host`` into ``(user, host)``."""
+
+    if "@" in s:
+
+        user, _, host = s.partition("@")
+
+        return (user or None), host
+
+    return None, s
+
+
+
+
+
+def _generate_env_template(
+
+    remote_user: str | None = None,
+
+    remote_host: str | None = None,
+
+    jump_user: str | None = None,
+
+    jump_host: str | None = None,
+
+) -> str:
+
+    import getpass
+
+    from virtuoso_bridge.virtuoso.basic.bridge import _default_remote_port
+
+
+
+    # Port hash follows the *remote* username when provided — otherwise
+
+    # fall back to the local user so existing init-without-args still
+
+    # picks a stable per-machine default.
+
+    port_user = remote_user
+
+    if not port_user:
+
+        try:
+
+            port_user = getpass.getuser()
+
+        except Exception:
+
+            port_user = ""
+
+    remote_port = _default_remote_port(port_user)
+
+    local_port = remote_port + 1
+
+    text = _env_template_path().read_text(encoding="utf-8").format(
+
+        remote_port=remote_port, local_port=local_port
+
+    )
+
+
+
+    def _sub_line(pattern: str, replacement: str) -> str:
+
+        return re.sub(
+
+            pattern, lambda _m: replacement, text, count=1, flags=re.MULTILINE
+
+        )
+
+
+
+    if remote_host:
+
+        text = _sub_line(r"^VB_REMOTE_HOST=$", f"VB_REMOTE_HOST={remote_host}")
+
+    if remote_user:
+
+        text = _sub_line(r"^VB_REMOTE_USER=$", f"VB_REMOTE_USER={remote_user}")
+
+    if jump_host:
+
+        text = _sub_line(r"^# VB_JUMP_HOST=$", f"VB_JUMP_HOST={jump_host}")
+
+    if jump_user:
+
+        text = _sub_line(r"^# VB_JUMP_USER=$", f"VB_JUMP_USER={jump_user}")
+
+    return text
+
+
+
+
+
+_PRINTED_ENV_PATH: Path | None = None
+
+
+
+
+
+def _load_cli_env() -> Path | None:
+
+    global _PRINTED_ENV_PATH
+
+    env_path = load_vb_env()
+
+    if env_path is not None and env_path != _PRINTED_ENV_PATH:
+
+        print(f"using .env: {env_path}")
+
+        _PRINTED_ENV_PATH = env_path
+
+    return env_path
+
+
+
+
+
+def cli_profile(*, action: str, profile: str | None = None) -> int:
+
+    """Inspect or edit profile bindings."""
+
+    from virtuoso_bridge.profile import (
+
+        bind_venv_profile,
+
+        clear_venv_profile,
+
+        read_venv_profile,
+
+        resolve_profile_info,
+
+    )
+
+
+
+    if action == "bind":
+
+        if profile is None:
+
+            print("profile bind requires a profile name")
+
+            return 2
+
+        try:
+
+            path = bind_venv_profile(profile)
+
+        except Exception as exc:
+
+            print(f"profile bind failed: {exc}")
+
+            return 1
+
+        print(f"Bound current virtualenv to profile {profile!r}")
+
+        print(f"  {path}")
+
+        return 0
+
+
+
+    if action == "clear":
+
+        try:
+
+            path = clear_venv_profile()
+
+        except Exception as exc:
+
+            print(f"profile clear failed: {exc}")
+
+            return 1
+
+        print("Cleared current virtualenv profile binding")
+
+        print(f"  {path}")
+
+        return 0
+
+
+
+    info = resolve_profile_info()
+
+    venv_path, venv_profile = read_venv_profile()
+
+    print(f"resolved profile : {info.profile or '(default)'}")
+
+    print(f"source           : {info.source}")
+
+    if info.path:
+
+        print(f"source path      : {info.path}")
+
+    print(f"venv binding     : {venv_profile or '(none)'}")
+
+    print(f"venv path        : {venv_path or '(no active virtualenv)'}")
+
+    return 0
+
+
+
+
+
+def _fmt(seconds: float) -> str:
+
+    return f"{seconds:.3f}s"
+
+
+
+
+
+# -- init -------------------------------------------------------------------
+
+
+
+def cli_init(
+
+    remote: str | None = None,
+
+    jump: str | None = None,
+
+    force: bool = False,
+
+) -> int:
+
+    remote_user = remote_host = None
+
+    if remote:
+
+        remote_user, remote_host = _parse_user_host(remote)
+
+    jump_user = jump_host = None
+
+    if jump:
+
+        jump_user, jump_host = _parse_user_host(jump)
+
+
+
+    env_path = default_user_env_path()
+
+    env_path.parent.mkdir(parents=True, exist_ok=True)
+
+    existed = env_path.exists()
+
+    if existed and not force:
+
+        print(f".env already exists at {env_path}")
+
+        if remote or jump:
+
+            print("  (arguments ignored; pass --force to overwrite)")
+
+    else:
+
+        content = _generate_env_template(
+
+            remote_user=remote_user,
+
+            remote_host=remote_host,
+
+            jump_user=jump_user,
+
+            jump_host=jump_host,
+
+        )
+
+        env_path.write_text(content, encoding="utf-8")
+
+        print(f".env {'overwritten' if existed else 'created'} at {env_path}")
+
+
+
+    if remote_host and not (existed and not force):
+
+        print("\nNext: run `virtuoso-bridge start`")
+
+    else:
+
+        print("\nNext: edit .env, set VB_REMOTE_HOST, then run: virtuoso-bridge start")
+
+    return 0
+
+
+
+
+
+# -- start ------------------------------------------------------------------
+
+
+
+def _format_ssh_failure(ssh_env) -> None:
+
+    """Print a user-friendly hint after ``warm`` fails for SSH-shaped reasons."""
+
+    print(f"SSH to {ssh_env.remote_host} failed.")
+
+    print(f"  Check VB_REMOTE_HOST and VB_REMOTE_USER in your .env file.")
+
+    if ssh_env.jump_host:
+
+        jump_user = ssh_env.jump_user or ssh_env.remote_user
+
+        print(
+
+            f"  Verify: ssh -J {jump_user}@{ssh_env.jump_host} "
+
+            f"{ssh_env.remote_user}@{ssh_env.remote_host}"
+
+        )
+
+    else:
+
+        print(f"  Verify: ssh {ssh_env.remote_user}@{ssh_env.remote_host}")
+
+    print(f"  For a local VM, use the VM's IP (run `ip addr` inside the VM).")
+
+
+
+
+
+def _start_one_profile(profile: str | None) -> int:
+
+    """Start tunnel for a single profile (thread-safe, uses explicit profile)."""
+
+    suffix = f"_{profile}" if profile else ""
+
+    remote_host = os.getenv(f"VB_REMOTE_HOST{suffix}", "").strip()
+
+    if not remote_host:
+
+        print(
+
+            f"VB_REMOTE_HOST{suffix} is not set. "
+
+            "Use --env FILE, create ./.env, or run `virtuoso-bridge init` to create ~/.virtuoso-bridge/.env."
+
+        )
+
+        return 1
+
+
+
+    from virtuoso_bridge.transport.tunnel import SSHClient, _is_localhost
+
+
+
+    is_local = _is_localhost(remote_host)
+
+
+
+    if SSHClient.is_running(profile):
+
+        msg = "Bridge already running." if is_local else "Tunnel already running."
+
+        print(msg)
+
+        return 0
+
+
+
+    label = f" [{profile}]" if profile else ""
+
+    if is_local:
+
+        print(f"Setting up local bridge{label}...")
+
+    else:
+
+        print(f"Starting tunnel{label}...")
+
+    ssh = SSHClient.from_env(keep_remote_files=True, profile=profile)
+
+    try:
+
+        started = time.monotonic()
+
+        try:
+
+            # No separate SSH precheck — ``warm()`` already performs the
+
+            # real handshake we need.  Probing first doubled the handshake
+
+            # count and, on jump-host setups where cold banner exchange
+
+            # easily exceeds 5 s, made the precheck false-negative while
+
+            # the actual tunnel would have succeeded.
+
+            ssh.warm()
+
+        except Exception as exc:
+
+            if not is_local:
+
+                _format_ssh_failure(remote_ssh_env_from_os(profile))
+
+                msg = str(exc).strip()
+
+                if msg:
+
+                    print(f"  Details: {msg.splitlines()[0]}")
+
+            else:
+
+                print(f"Local bridge setup failed: {exc}")
+
+            return 1
+
+        elapsed = time.monotonic() - started
+
+        print(f"tunnel.warm = {_fmt(elapsed)}")
+
+
+
+        if is_local:
+
+            # For local mode, print setup_path for user to load in CIW
+
+            state = SSHClient.read_state(profile)
+
+            if state:
+
+                setup_path = state.get("setup_path")
+
+                if setup_path:
+
+                    print(f"  Load in Virtuoso CIW: load(\"{setup_path}\")")
+
+            return 0
+
+
+
+        time.sleep(1.0)
+
+        if not SSHClient.is_running(profile):
+
+            print("[warning] Tunnel process exited shortly after start.")
+
+            print("Try starting the tunnel manually:")
+
+            ssh_env = remote_ssh_env_from_os(profile)
+
+            port = ssh.port
+
+            manual_cmd = f"ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o ExitOnForwardFailure=yes -N -L {port}:127.0.0.1:{port}"
+
+            if ssh_env.jump_host:
+
+                jump = f"{ssh_env.jump_user or ssh_env.remote_user}@{ssh_env.jump_host}" if (ssh_env.jump_user or ssh_env.remote_user) else ssh_env.jump_host
+
+                manual_cmd += f" -J {jump}"
+
+            target = f"{ssh_env.remote_user}@{ssh_env.remote_host}" if ssh_env.remote_user else ssh_env.remote_host
+
+            manual_cmd += f" {target}"
+
+            print(f"  {manual_cmd}")
+
+            return 1
+
+
+
+        return 0
+
+    finally:
+
+        ssh.close()
+
+
+
+
+
+def _start_one() -> int:
+
+    """Start tunnel for the current profile (read from _CLI_PROFILE)."""
+
+    return _start_one_profile(_get_cli_profile())
+
+
+
+
+
+def cli_start() -> int:
+
+    _load_cli_env()
+
+    profile = _get_cli_profile()
+
+    if profile is None:
+
+        profiles = _discover_profiles()
+
+        if len(profiles) > 1:
+
+            with concurrent.futures.ThreadPoolExecutor(max_workers=len(profiles)) as ex:
+
+                list(ex.map(_start_one_profile, profiles))
+
+            return cli_status()
+
+    return _start_one_profile(profile)
+
+
+
+
+
+# -- stop -------------------------------------------------------------------
+
+
+
+def _stop_one() -> int:
+
+    """Stop tunnel for the current profile."""
+
+    profile = _get_cli_profile()
+
+    from virtuoso_bridge.transport.tunnel import SSHClient
+
+
+
+    label = f" [{profile}]" if profile else ""
+
+    if not SSHClient.is_running(profile):
+
+        print(f"No tunnel running{label}.")
+
+        return 0
+
+
+
+    ssh = SSHClient.from_env(keep_remote_files=True, profile=profile)
+
+    ssh.stop()
+
+    print(f"Tunnel stopped{label}.")
+
+    return 0
+
+
+
+
+
+def cli_stop() -> int:
+
+    _load_cli_env()
+
+    return _for_each_profile(_stop_one)
+
+
+
+
+
+# -- restart ----------------------------------------------------------------
+
+
+
+def _restart_daemon_one(profile: str | None) -> None:
+
+    """Ask the CIW-side RAMIC loader to restart the daemon for this profile."""
+
+    from virtuoso_bridge.daemon_guard import check_daemon_user
+
+    from virtuoso_bridge.models import ExecutionStatus
+
+    from virtuoso_bridge.transport.tunnel import SSHClient
+
+    from virtuoso_bridge.virtuoso.basic.bridge import VirtuosoClient
+
+    from virtuoso_bridge.virtuoso.ops import escape_skill_string
+
+
+
+    state = SSHClient.read_state(profile)
+
+    if not state or not state.get("port"):
+
+        return
+
+
+
+    label = f" [{profile}]" if profile else ""
+
+    setup_path = str(state.get("setup_path") or "")
+
+    if setup_path:
+
+        skill = f'RBStop()\nload("{escape_skill_string(setup_path)}")'
+
+    else:
+
+        skill = "RBStop()\nRBStart()"
+
+
+
+    print(f"Restarting daemon{label}...")
+
+    client = VirtuosoClient(
+
+        host="127.0.0.1",
+
+        port=int(state["port"]),
+
+        timeout=5,
+
+        log_to_ciw=False,
+
+    )
+
+    try:
+
+        user_check = check_daemon_user(client, profile=profile, timeout=5)
+
+    except Exception as exc:
+
+        print(f"[warning] Could not check daemon before restart{label}: {exc}")
+
+        return
+
+    if not user_check.ok:
+
+        print(f"[warning] Refusing to restart daemon{label}: {user_check.error}")
+
+        return
+
+
+
+    result = client.execute_skill(skill, timeout=5)
+
+    if result.status == ExecutionStatus.SUCCESS:
+
+        print(f"Daemon restart requested{label}.")
+
+        return
+
+
+
+    details = "; ".join(result.errors) or result.output or "unknown error"
+
+    expected_disconnect = (
+
+        "Empty response from daemon",
+
+        "Connection reset",
+
+        "Broken pipe",
+
+    )
+
+    if any(fragment in details for fragment in expected_disconnect):
+
+        print(
+
+            f"Daemon restart requested{label} "
+
+            "(old daemon closed the connection while restarting)."
+
+        )
+
+        return
+
+
+
+    print(f"[warning] Could not restart daemon{label}: {details}")
+
+
+
+
+
+def _restart_one() -> int:
+
+    """Restart tunnel and request daemon restart for the current profile."""
+
+    profile = _get_cli_profile()
+
+    from virtuoso_bridge.transport.tunnel import SSHClient
+
+
+
+    if SSHClient.is_running(profile):
+
+        label = f" [{profile}]" if profile else ""
+
+        print(f"Stopping tunnel{label}...")
+
+        ssh = SSHClient.from_env(keep_remote_files=True, profile=profile)
+
+        ssh.stop()
+
+        time.sleep(0.5)
+
+
+
+    rc = _start_one()
+
+    if rc == 0:
+
+        _restart_daemon_one(profile)
+
+    return rc
+
+
+
+
+
+def cli_restart() -> int:
+
+    _load_cli_env()
+
+    return _for_each_profile(_restart_one)
+
+
+
+
+
+# -- status -----------------------------------------------------------------
+
+
+
+def _print_load_hint(setup_path: str) -> None:
+
+    """Print CIW load command and .cdsinit auto-load suggestion."""
+
+    print(f"\n  Load in Virtuoso CIW:")
+
+    print(f"    load(\"{setup_path}\")")
+
+    print(f"\n  To auto-load on every Virtuoso startup, add to your .cdsinit:")
+
+    print(f"    load(\"{setup_path}\")")
+
+
+
+
+
+def _print_stale_daemon_hint() -> None:
+
+    """Print recovery guidance for a CIW daemon left from another setup."""
+
+    print("\n  If CIW says \"already running\", load() did not replace the existing daemon.")
+
+    print("  To switch profile/port, run in CIW:")
+
+    print("    RBStop()")
+
+    print("    load(\".../virtuoso_setup.il\")")
+
+    print("  If that does not clear it, use RBStopAll() before loading again.")
+
+
+
+
+
+def _print_cross_user_daemon_failure(error: str) -> None:
+
+    from virtuoso_bridge.daemon_guard import OVERRIDE_ENV
+
+
+
+    print("\n[daemon identity] FAILED")
+
+    print(f"  {error}")
+
+    print(f"  Set {OVERRIDE_ENV}=1 only if this cross-user connection is intentional.")
+
+
+
+
+
+def _print_status() -> int:
+
+    _load_cli_env()
+
+    profile = _get_cli_profile()
+
+    from virtuoso_bridge.transport.tunnel import SSHClient, _is_localhost, _profiled_bridge_leaf
+
+    from virtuoso_bridge.virtuoso.basic.bridge import VirtuosoClient
+
+
+
+    state = SSHClient.read_state(profile)
+
+    running = SSHClient.is_running(profile)
+
+
+
+    from virtuoso_bridge import __version__
+
+    label = f" [{profile}]" if profile else ""
+
+    print(f"  Virtuoso Bridge v{__version__}{label}")
+
+
+
+    suffix = f"_{profile}" if profile else ""
+
+    configured_host = os.getenv(f"VB_REMOTE_HOST{suffix}", "").strip()
+
+    configured_user = os.getenv(f"VB_REMOTE_USER{suffix}", "").strip()
+
+    jump_host = os.getenv(f"VB_JUMP_HOST{suffix}", "").strip()
+
+
+
+    is_local = _is_localhost(configured_host) if configured_host else False
+
+
+
+    # Infer setup_path from user config when state is unavailable
+
+    def _infer_setup_path() -> str | None:
+
+        from virtuoso_bridge.transport.remote_paths import (
+
+            default_virtuoso_bridge_dir,
+
+            resolve_client_id,
+
+        )
+
+
+
+        user = configured_user
+
+        if not user:
+
+            import getpass
+
+            try:
+
+                user = getpass.getuser()
+
+            except Exception:
+
+                return None
+
+        work_dir = default_virtuoso_bridge_dir(
+
+            user,
+
+            _profiled_bridge_leaf(profile),
+
+            resolve_client_id(profile),
+
+        )
+
+        return f"{work_dir}/virtuoso_setup.il"
+
+
+
+    if is_local:
+
+        print(f"\n[mode] local (no SSH tunnel)")
+
+        if state:
+
+            print(f"  port : {state.get('port')}")
+
+            setup_path = state.get("setup_path")
+
+        else:
+
+            setup_path = None
+
+    else:
+
+        # Remote tunnel mode
+
+        print(f"\n[tunnel] {'running' if running else 'NOT running'}")
+
+        print(f"  remote host : {configured_host or '(not set)'}")
+
+        print(f"  remote user : {configured_user or '(not set)'}")
+
+        if jump_host:
+
+            print(f"  jump host   : {jump_host}")
+
+        if state:
+
+            print(f"  local port  : {state.get('port')}")
+
+            setup_path = state.get("setup_path")
+
+        else:
+
+            setup_path = None
+
+
+
+    if not setup_path:
+
+        setup_path = _infer_setup_path()
+
+
+
+    # Daemon (Virtuoso CIW)
+
+    # For local mode, check daemon if we have state (don't require 'running')
+
+    daemon_user_ok = True
+
+    can_check_daemon = (is_local and state) or (running and state)
+
+    if can_check_daemon:
+
+        if state is None:
+
+            print("\n[daemon] cannot check (state missing)")
+
+            return 1
+
+        port = state["port"]
+
+        try:
+
+            vc = VirtuosoClient(host="127.0.0.1", port=port, timeout=5)
+
+            ok = vc.test_connection(timeout=5)
+
+            print(f"\n[daemon] {'OK - connected to Virtuoso CIW' if ok else 'NO RESPONSE'}")
+
+            if ok:
+
+                from virtuoso_bridge.daemon_guard import check_daemon_user
+
+
+
+                try:
+
+                    user_check = check_daemon_user(vc, profile=profile, timeout=5)
+
+                    if user_check.daemon_user:
+
+                        print(f"  daemon user: {user_check.daemon_user}")
+
+                    if user_check.expected_user:
+
+                        print(f"  tunnel user: {user_check.expected_user}")
+
+                    if not user_check.ok:
+
+                        daemon_user_ok = False
+
+                        _print_cross_user_daemon_failure(user_check.error)
+
+                except Exception as exc:
+
+                    print(f"  daemon user: unavailable ({exc})")
+
+
+
+                # Query Virtuoso environment info
+
+                for skill_expr, label in [
+
+                    ('getHostName()', 'hostname'),
+
+                    ('getCurrentTime()', 'time'),
+
+                    ('getVersion()', 'version'),
+
+                    ('getWorkingDir()', 'workdir'),
+
+                ]:
+
+                    try:
+
+                        r = vc.execute_skill(skill_expr, timeout=5)
+
+                        val = (r.output or "").strip().strip('"')
+
+                        if val:
+
+                            print(f"  {label:<10s}: {val}")
+
+                    except Exception:
+
+                        pass
+
+
+
+                # Say hello in Virtuoso CIW with timestamp
+
+                vc.execute_skill(
+
+                    r'printf("\n  [virtuoso-bridge] Status check at %s - connection OK.\n\n" getCurrentTime())',
+
+                    timeout=5,
+
+                )
+
+            if not ok and setup_path:
+
+                _print_load_hint(setup_path)
+
+                _print_stale_daemon_hint()
+
+        except Exception as e:
+
+            print(f"\n[daemon] error: {e}")
+
+    elif not is_local and not running:
+
+        print(f"\n[daemon] cannot check (tunnel not running)")
+
+        if setup_path:
+
+            _print_load_hint(setup_path)
+
+
+
+    # Spectre
+
+    if is_local or running:
+
+        _print_spectre_status(profile, suffix)
+
+
+
+    print("\n========================================================================")
+
+    if is_local:
+
+        return 0 if daemon_user_ok else 1
+
+    return 0 if running and daemon_user_ok else 1
+
+
+
+
+
+def _print_spectre_status(profile: str | None, suffix: str) -> None:
+
+    """Check and print Spectre availability.
+
+
+
+    For local mode: uses shutil.which and subprocess locally.
+
+    For remote mode: SSH-based check via SSHClient.
+
+
+
+    Strategy (remote): try ``which spectre`` directly first (works when the
+
+    user's login shell already has Cadence on PATH).  If that fails and
+
+    VB_CADENCE_CSHRC is set, source it in a csh sub-shell and retry.
+
+    """
+
+    import shutil
+
+    import subprocess
+
+
+
+    from virtuoso_bridge.transport.tunnel import SSHClient, _is_localhost
+
+
+
+    configured_host = os.getenv(f"VB_REMOTE_HOST{suffix}", "").strip()
+
+    is_local = _is_localhost(configured_host) if configured_host else False
+
+
+
+    if is_local:
+
+        try:
+
+            spectre_bin = (
+
+                os.getenv(f"VB_SPECTRE_BIN{suffix}", "").strip()
+
+                or os.getenv("VB_SPECTRE_BIN", "").strip()
+
+            )
+
+            spectre_path = spectre_bin or shutil.which("spectre")
+
+            version = None
+
+            if spectre_path:
+
+                try:
+
+                    result = subprocess.run(
+
+                        [spectre_path, "-V"],
+
+                        capture_output=True, text=True, timeout=10,
+
+                    )
+
+                    for line in (result.stdout + result.stderr).splitlines():
+
+                        if line.strip().startswith("@(#)$CDS:"):
+
+                            version = line.strip()
+
+                            break
+
+                except Exception:
+
+                    pass
+
+            if spectre_path:
+
+                print(f"\n[spectre] OK")
+
+                print(f"  path    : {spectre_path}")
+
+                if version:
+
+                    print(f"  version : {version}")
+
+            else:
+
+                print(f"\n[spectre] NOT FOUND")
+
+        except Exception as e:
+
+            print(f"\n[spectre] error: {e}")
+
+        return
+
+
+
+    # Remote mode — SSH-based check
+
+    ssh = None
+
+    try:
+
+        ssh = SSHClient.from_env(keep_remote_files=True, profile=profile)
+
+        runner = ssh.ssh_runner
+
+        if runner is None:
+
+            print("\n[spectre] local mode (no SSH runner)")
+
+            return
+
+        runner._verbose = False
+
+
+
+        spectre_bin = (
+
+            os.getenv(f"VB_SPECTRE_BIN{suffix}", "").strip()
+
+            or os.getenv("VB_SPECTRE_BIN", "").strip()
+
+        )
+
+
+
+        if spectre_bin:
+
+            # Explicit binary path — skip auto-detection.
+
+            quoted = shlex.quote(spectre_bin)
+
+            check_cmd = f"{quoted} -V 2>&1 | head -1"
+
+            print("\n[spectre] probing...", flush=True)
+
+            result = runner.run_command(check_cmd, timeout=60)
+
+            stdout = result.stdout.strip()
+
+            version = None
+
+            for line in stdout.splitlines():
+
+                if line.strip().startswith("@(#)$CDS:"):
+
+                    version = line.strip()
+
+                    break
+
+            print("[spectre] OK")
+
+            print(f"  path    : {spectre_bin}")
+
+            if version:
+
+                print(f"  version : {version}")
+
+            return
+
+
+
+        # Two detection strategies, fused into a single SSH handshake:
+
+        #
+
+        #   (A) fast path: spectre already on PATH (bash-shell login,
+
+        #       or ssh server configured with Cadence env baked in)
+
+        #   (B) slow path: source VB_CADENCE_CSHRC inside csh, re-check
+
+        #
+
+        # Older revisions issued these as two separate SSH calls. On
+
+        # congested jump hosts / Windows without ControlMaster, each
+
+        # SSH is a fresh TCP + sshd fork, doubling the risk of banner-
+
+        # exchange timeouts that manifested as spurious "NOT FOUND".
+
+        # Bash parses ``A || B | C`` as ``A || (B | C)`` so the
+
+        # ``head -5`` only applies to the csh fallback — same semantics
+
+        # as before, one round-trip instead of two.
+
+        cadence_cshrc = (
+
+            os.getenv(f"VB_CADENCE_CSHRC{suffix}", "").strip()
+
+            or os.getenv("VB_CADENCE_CSHRC", "").strip()
+
+        )
+
+        fast = "which spectre 2>/dev/null && spectre -V 2>&1 | head -1"
+
+        if cadence_cshrc:
+
+            # Keep csh script out of bash's view — ``!`` / backticks /
+
+            # ``$?VAR`` must reach csh verbatim.
+
+            #
+
+            # Seed HOSTNAME/LD_LIBRARY_PATH with non-empty placeholders:
+
+            # some site cshrc files do ``setenv LD_LIBRARY_PATH
+
+            # ${MMSIM_HOME}/tools/lib:$LD_LIBRARY_PATH`` and csh aborts
+
+            # partway through when ``$LD_LIBRARY_PATH`` is undefined —
+
+            # leaving PATH unpatched so ``which spectre`` returns
+
+            # nothing.  An empty string (``""``) was found insufficient
+
+            # in practice; ``blank`` is a harmless throwaway that the
+
+            # subsequent concat safely overwrites.
+
+            csh_script = (
+
+                'setenv HOSTNAME `hostname`; '
+
+                'setenv LD_LIBRARY_PATH blank; '
+
+                f'source {cadence_cshrc}; '
+
+                'which spectre; '
+
+                'spectre -V'
+
+            )
+
+            slow = f"csh -f -c {shlex.quote(csh_script)} 2>&1 | head -5"
+
+            combined = f"{{ {fast}; }} || {{ {slow}; }}"
+
+        else:
+
+            combined = fast
+
+        check_cmd = f"bash -l -c {shlex.quote(combined)}"
+
+        print("\n[spectre] probing...", flush=True)
+
+        result = runner.run_command(check_cmd, timeout=60)
+
+        stdout = result.stdout.strip()
+
+
+
+        spectre_path = None
+
+        version = None
+
+        for line in stdout.splitlines():
+
+            line = line.strip()
+
+            if line.startswith("@(#)$CDS:"):
+
+                version = line
+
+            elif "/" in line and "spectre" in line.lower():
+
+                spectre_path = line
+
+
+
+        if spectre_path:
+
+            print("[spectre] OK")
+
+            print(f"  path    : {spectre_path}")
+
+            if version:
+
+                print(f"  version : {version}")
+
+        else:
+
+            print("[spectre] NOT FOUND")
+
+    except Exception as e:
+
+        print(f"[spectre] error: {e}")
+
+    finally:
+
+        if ssh is not None:
+
+            ssh.close()
+
+
+
+
+
+def _discover_profiles() -> list[str | None]:
+
+    """Scan environment for all VB_REMOTE_HOST* variables and return profile list.
+
+
+
+    Returns a list where None represents the default (unsuffixed) profile
+
+    and strings represent named profiles.
+
+    """
+
+    profiles: list[str | None] = []
+
+    pattern = re.compile(r"^VB_REMOTE_HOST(?:_(.+))?$")
+
+    for key in sorted(os.environ):
+
+        m = pattern.match(key)
+
+        if m and os.environ[key].strip():
+
+            profiles.append(m.group(1))  # None for default, name for suffixed
+
+    return profiles
+
+
+
+
+
+def _for_each_profile(fn: Callable[[], int]) -> int:
+
+    """Run *fn* for each profile. If -p was given, run only that one.
+
+
+
+    Returns 0 if any profile succeeded (returned 0), 1 otherwise.
+
+    """
+
+    profile = _get_cli_profile()
+
+    if profile is not None:
+
+        return fn()
+
+    profiles = _discover_profiles()
+
+    if not profiles:
+
+        print("No profiles found. Set VB_REMOTE_HOST in .env first.")
+
+        return 1
+
+    any_ok = False
+
+    for i, p in enumerate(profiles):
+
+        _CLI_PROFILE[0] = p
+
+        ret = fn()
+
+        if ret == 0:
+
+            any_ok = True
+
+        if i < len(profiles) - 1:
+
+            print()
+
+    return 0 if any_ok else 1
+
+
+
+
+
+def cli_status() -> int:
+
+    _load_cli_env()
+
+    return _for_each_profile(_print_status)
+
+
+
+
+
+# -- license ----------------------------------------------------------------
+
+
+
+def cli_license() -> int:
+
+    _load_cli_env()
+
+    profile = _get_cli_profile()
+
+    suffix = f"_{profile}" if profile else ""
+
+    cadence_cshrc = os.getenv(f"VB_CADENCE_CSHRC{suffix}", "").strip() or os.getenv("VB_CADENCE_CSHRC", "").strip()
+
+    if not cadence_cshrc:
+
+        print("VB_CADENCE_CSHRC is not set.")
+
+        return 1
+
+
+
+    from virtuoso_bridge.transport.tunnel import SSHClient
+
+    if not SSHClient.is_running(profile):
+
+        hint = f"Run `virtuoso-bridge start -p {profile}` first." if profile else "Run `virtuoso-bridge start` first."
+
+        print(f"No tunnel running. {hint}")
+
+        return 1
+
+
+
+    from virtuoso_bridge.transport.tunnel import _is_localhost
+
+    from virtuoso_bridge.spectre.runner import SpectreSimulator
+
+
+
+    suffix = f"_{profile}" if profile else ""
+
+    configured_host = os.getenv(f"VB_REMOTE_HOST{suffix}", "").strip()
+
+
+
+    ssh = None
+
+    try:
+
+        if _is_localhost(configured_host):
+
+            sim = SpectreSimulator.from_env(profile=profile)
+
+        else:
+
+            # Create SSHRunner with verbose=False to suppress [cmd] output
+
+            ssh = SSHClient.from_env(keep_remote_files=True, profile=profile)
+
+            runner = ssh.ssh_runner
+
+            if runner is None:
+
+                print("No SSH runner available for remote license check.")
+
+                return 1
+
+            runner._verbose = False
+
+            sim = SpectreSimulator.from_env(profile=profile, ssh_runner=runner)
+
+
+
+        info = sim.check_license()
+
+
+
+        print(f"[spectre] {info.get('spectre_path', 'NOT FOUND')}")
+
+        if info.get("version"):
+
+            print(f"  version: {info['version']}")
+
+        licenses = info.get("licenses", [])
+
+        if licenses:
+
+            print(f"\n[licenses in use] ({len(licenses)} features)")
+
+            for line in licenses:
+
+                print(f"  {line}")
+
+
+
+        return 0 if info.get("ok") else 1
+
+    finally:
+
+        if ssh is not None:
+
+            ssh.close()
+
+
+
+
+
+# -- main -------------------------------------------------------------------
+
+
+
+def _make_ssh_runner() -> tuple["SSHRunner | None", str]:
+
+    """Create an SSHRunner from .env config (for X11 commands).
+
+
+
+    In local mode (VB_REMOTE_HOST is this machine) return ``(None, user)`` so
+
+    the X11 helper runs locally via subprocess instead of trying to SSH to
+
+    localhost (which fails without passwordless key auth). Mirrors the local
+
+    detection used by the daemon/tunnel path.
+
+    """
+
+    from virtuoso_bridge.transport.ssh import SSHRunner
+
+    from virtuoso_bridge.transport.tunnel import _is_localhost
+
+
+
+    profile = _get_cli_profile()
+
+    suffix = f"_{profile}" if profile else ""
+
+    remote_host = os.getenv(f"VB_REMOTE_HOST{suffix}", "").strip()
+
+    remote_user = os.getenv(f"VB_REMOTE_USER{suffix}", "").strip()
+
+    jump_host = os.getenv(f"VB_JUMP_HOST{suffix}", "").strip() or None
+
+    jump_user = os.getenv(f"VB_JUMP_USER{suffix}", remote_user).strip() or None
+
+    if not remote_host:
+
+        raise SystemExit("Error: VB_REMOTE_HOST not set")
+
+    if _is_localhost(remote_host):
+
+        return None, remote_user
+
+    return SSHRunner(host=remote_host, user=remote_user,
+
+                     jump_host=jump_host, jump_user=jump_user), remote_user
+
+
+
+
+
+def cli_load(*, file: str, timeout: int = 60, quiet: bool = False) -> int:
+
+    """Execute a SKILL .il file in the running Virtuoso session.
+
+
+
+    Equivalent to ``load("<file>")`` typed in the CIW: SKILL reads the
+
+    original file directly, so error messages keep the **original file
+
+    path + line numbers** (no temp-wrapper pollution).  In SSH mode
+
+    the file is uploaded first; in local mode the path is forwarded
+
+    as-is.  Both paths land in :meth:`VirtuosoClient.load_il`.
+
+
+
+    Output: the full ``VirtuosoResult`` serialised as JSON on stdout
+
+    (status, output, errors, warnings, execution_time, metadata).
+
+    Designed for VS Code tasks / code-runner / wrapper scripts to
+
+    consume without re-parsing terminal text.  ``--quiet`` suppresses
+
+    the JSON; only the exit code remains.
+
+
+
+    Returns: 0 on SUCCESS, 1 on SKILL-side error, 2 on missing local
+
+    file.
+
+    """
+
+    import json
+
+    import sys
+
+    from pathlib import Path
+
+
+
+    import virtuoso_bridge as _vb_pkg
+
+    from virtuoso_bridge.models import ExecutionStatus
+
+
+
+    # Missing file is a common user typo (often from VS Code tasks
+
+    # passing an unsaved/renamed buffer).  Fail fast before loading env
+
+    # so the error message isn't preceded by a "using .env: ..." line.
+
+    p = Path(file)
+
+    if not p.is_file():
+
+        print(f"ERROR: file not found: {p}", file=sys.stderr)
+
+        return 2
+
+
+
+    _load_cli_env()
+
+    client = _vb_pkg.VirtuosoClient.from_env(profile=_get_cli_profile())
+
+    result = client.load_il(p, timeout=timeout)
+
+
+
+    if not quiet:
+
+        # Stable contract: dump the VirtuosoResult exactly as the model
+
+        # defines it.  Consumers (VS Code task output, scripts) should
+
+        # rely on these field names rather than scraping prose.
+
+        print(json.dumps(
+
+            result.model_dump(mode="json"),
+
+            indent=2, ensure_ascii=False, default=str,
+
+        ))
+
+
+
+    return 0 if result.status == ExecutionStatus.SUCCESS else 1
+
+
+
+
+
+def cli_eval(*, skill: str | None, stdin: bool, timeout: int = 60,
+
+             quiet: bool = False) -> int:
+
+    """Execute a SKILL expression in the running Virtuoso session.
+
+
+
+    Companion to :func:`cli_load` for one-liners and round-trip checks
+
+    where wrapping the snippet in a temp ``.il`` file would be friction.
+
+    Source the SKILL from argv (``virtuoso-bridge eval 'getCurrentTime()'``)
+
+    or from stdin (``echo 'expr' | virtuoso-bridge eval --stdin``); the
+
+    latter sidesteps shell-quoting pain for snippets full of ``"``,
+
+    parens, and quoted symbols.
+
+
+
+    Output: same JSON shape as :func:`cli_load` so consumers don't need
+
+    to branch on which command produced the result.
+
+
+
+    Returns: 0 on SUCCESS, 1 on SKILL-side error, 2 on input misuse
+
+    (no SKILL provided, or both argv and ``--stdin`` given).
+
+    """
+
+    import json
+
+    import sys
+
+
+
+    import virtuoso_bridge as _vb_pkg
+
+    from virtuoso_bridge.models import ExecutionStatus
+
+
+
+    if stdin and skill is not None:
+
+        print("ERROR: pass SKILL via argv OR --stdin, not both",
+
+              file=sys.stderr)
+
+        return 2
+
+    if stdin:
+
+        skill = sys.stdin.read()
+
+    if skill is None or not skill.strip():
+
+        print("ERROR: empty SKILL expression", file=sys.stderr)
+
+        return 2
+
+
+
+    # Wrap in progn(...) on its own lines so that:
+
+    #   * multi-statement inputs (`printf(...) "ret"`) work without the
+
+    #     user adding progn themselves -- the daemon's single-line path
+
+    #     does `let(((__vb_r <code>)) ...)` which only takes one form;
+
+    #   * trailing `; comment` doesn't swallow the closing paren --
+
+    #     the wrapping newline before `)` terminates the line comment;
+
+    #   * embedded newlines (heredoc / multi-line input) flow through
+
+    #     unchanged.
+
+    # The newlines also force the daemon onto its multi-line code path
+
+    # (temp-file + load), which handles `progn` reliably.
+
+    wrapped = f"progn(\n{skill}\n)"
+
+
+
+    _load_cli_env()
+
+    client = _vb_pkg.VirtuosoClient.from_env(profile=_get_cli_profile())
+
+    result = client.execute_skill(wrapped, timeout=timeout)
+
+
+
+    if not quiet:
+
+        print(json.dumps(
+
+            result.model_dump(mode="json"),
+
+            indent=2, ensure_ascii=False, default=str,
+
+        ))
+
+
+
+    return 0 if result.status == ExecutionStatus.SUCCESS else 1
+
+
+
+
+
+def cli_dismiss_dialog() -> int:
+
+    """Find and dismiss blocking Virtuoso GUI dialogs via X11."""
+
+    _load_cli_env()
+
+    from virtuoso_bridge.virtuoso import x11
+
+    runner, user = _make_ssh_runner()
+
+
+
+    dialogs = x11.dismiss_dialogs(runner, user, profile=_get_cli_profile())
+
+    if not dialogs:
+
+        print("No dialog windows found.")
+
+        return 0
+
+
+
+    for d in dialogs:
+
+        if "error" in d:
+
+            print(f"  Error: {d['error']}")
+
+        elif "dismissed" in d:
+
+            print(f"  Dismissed: {d['dismissed']}")
+
+        elif "title" in d:
+
+            print(f'  Found: "{d["title"]}" at ({d.get("x",0)},{d.get("y",0)})')
+
+    return 0
+
+
+
+
+
+def cli_list_windows(*, json_output: bool = False) -> int:
+
+    """List Virtuoso-related X11 windows without dismissing anything."""
+
+    import json
+
+
+
+    if json_output:
+
+        load_vb_env()
+
+    else:
+
+        _load_cli_env()
+
+    from virtuoso_bridge.virtuoso import x11
+
+    runner, user = _make_ssh_runner()
+
+
+
+    windows = x11.list_windows(runner, user, profile=_get_cli_profile())
+
+    if json_output:
+
+        print(json.dumps(windows, indent=2, ensure_ascii=False, default=str))
+
+        return 0
+
+    if not windows:
+
+        print("No Virtuoso X11 windows found.")
+
+        return 0
+
+    for w in windows:
+
+        geo = w.get("geometry") or {}
+
+        title = w.get("title") or "(untitled)"
+
+        print(
+
+            f"{w.get('dismiss_id') or w.get('window_id')} "
+
+            f"[{w.get('kind', 'window')}] {title} "
+
+            f"{geo.get('w', 0)}x{geo.get('h', 0)}+{geo.get('x', 0)}+{geo.get('y', 0)} "
+
+            f"action={w.get('suggested_action') or '-'}"
+
+        )
+
+    return 0
+
+
+
+
+
+def cli_dismiss_window(*, window_id: str, action: str = "enter") -> int:
+
+    """Dismiss one explicit X11 window id via XTest."""
+
+    _load_cli_env()
+
+    from virtuoso_bridge.virtuoso import x11
+
+    runner, user = _make_ssh_runner()
+
+
+
+    results = x11.dismiss_window(
+
+        runner,
+
+        user,
+
+        window_id,
+
+        action=action,
+
+        profile=_get_cli_profile(),
+
+    )
+
+    if not results:
+
+        print("No result returned.")
+
+        return 1
+
+    ok = True
+
+    for result in results:
+
+        if "error" in result:
+
+            ok = False
+
+            print(f"  Error: {result['error']}")
+
+        else:
+
+            print(
+
+                f"  Dismissed: {result.get('dismissed', window_id)} "
+
+                f"action={result.get('action', action)}"
+
+            )
+
+    return 0 if ok else 1
+
+
+
+
+
+
+
+_SCREENSHOT_TARGET: list[str] = ["ciw"]
+
+
+
+# Mutable bag for cli_snapshot — set from argparse, read inside the handler.
+
+# `output_root=None` is a sentinel for "user didn't pass -o" — that's what
+
+# selects brief stdout mode.
+
+_SNAPSHOT_OPTS: dict = {
+
+    "output_root": None,
+
+    "json":        False,
+
+    "history":     None,
+
+}
+
+
+
+_EXPORT_VISIO_OPTS: dict = {
+
+    "lib":               None,
+
+    "cell":              None,
+
+    "output":            None,
+
+    "stencil":           None,
+
+    "scale":             1.0,
+
+    "exclude_nets":      [],
+
+    "exclude_pins":      ["B"],
+
+    "include_body_pins": False,
+
+    "hidden":            False,
+
+}
+
+
+
+
+
+def cli_find(*, query: str | None, mode: str, limit: int, include_desc: bool, json_output: bool) -> int:
+
+    """Search SKILL API documentation from Cadence .fnd files.
+
+
+
+    On first run for a given server, downloads the SKILL Finder database
+
+    (~tens of MB) to a local cache.  Subsequent runs use the cache.
+
+    """
+
+    import json as _json
+
+    import sys
+
+
+
+    _load_cli_env()
+
+    from virtuoso_bridge import VirtuosoClient
+
+    from virtuoso_bridge.virtuoso.skill_finder import SKILLFinder
+
+
+
+    client = VirtuosoClient.from_env(profile=_get_cli_profile())
+
+
+
+    if not query:
+
+        print("Error: query argument required for 'skill-find'", file=sys.stderr)
+
+        return 1
+
+
+
+    results = client.find_skill(query or "", mode=mode, limit=limit, include_desc=include_desc)
+
+
+
+    if not query:
+
+        print("Error: query argument required for 'skill-find'", file=sys.stderr)
+
+        return 1
+
+
+
+    if json_output:
+
+        print(_json.dumps(results, indent=2, ensure_ascii=False))
+
+    else:
+
+        finder = SKILLFinder()
+
+        from virtuoso_bridge.virtuoso.skill_finder.parser import SkillEntry
+
+        entries = [SkillEntry(**r) for r in results]
+
+        print(finder.format_results(entries, query or ""))
+
+
+
+    return 0
+
+
+
+
+
+def cli_skill_info(*, func_name: str, json_output: bool) -> int:
+
+    """Get More Info documentation for a specific SKILL function."""
+
+    import json as _json
+
+
+
+    _load_cli_env()
+
+    from virtuoso_bridge import VirtuosoClient
+
+
+
+    client = VirtuosoClient.from_env(profile=_get_cli_profile())
+
+    result = client.get_skill_more_info(func_name)
+
+
+
+    if json_output:
+
+        print(_json.dumps(result, indent=2, ensure_ascii=False))
+
+    else:
+
+        if result is None:
+
+            print(f"No More Info found for: {func_name}")
+
+            return 1
+
+        print(f"More Info — {result['func_name']}")
+
+        print(f"  Source  : {result['file_path']}")
+
+        print(f"  Topic   : {result['topic'] or '(whole file)'}")
+
+        print()
+
+        print(result["plain_text"])
+
+    return 0
+
+
+
+
+
+def cli_doc_search(
+
+    *,
+
+    query: str | None,
+
+    doc_roots: list[Path],
+
+    limit: int,
+
+    list_roots: bool,
+
+    json_output: bool,
+
+    rebuild_index: bool,
+
+) -> int:
+
+    """Search installed Cadence documentation locally or through the bridge."""
+
+    import json as _json
+
+    import sys
+
+
+
+    from virtuoso_bridge.runtime_paths import cache_dir as runtime_cache_dir
+
+    from virtuoso_bridge.virtuoso.docs_search import resolve_doc_roots, search_docs
+
+
+
+    if doc_roots:
+
+        roots = resolve_doc_roots(doc_roots)
+
+        payload: dict[str, object]
+
+        if list_roots:
+
+            payload = {"ok": True, "doc_roots": [str(root) for root in roots]}
+
+        else:
+
+            if not query:
+
+                print("Error: query argument required for 'doc-search'", file=sys.stderr)
+
+                return 1
+
+            if not roots:
+
+                print("Error: no existing Cadence doc roots found for --doc-root.", file=sys.stderr)
+
+                return 1
+
+            payload = {
+
+                "ok": True,
+
+                "query": query,
+
+                "doc_roots": [str(root) for root in roots],
+
+                "results": search_docs(
+
+                    query,
+
+                    roots,
+
+                    cache_root=runtime_cache_dir("docs_search") / "local",
+
+                    limit=max(limit, 0),
+
+                    rebuild=rebuild_index,
+
+                ),
+
+            }
+
+    else:
+
+        _load_cli_env()
+
+        from virtuoso_bridge import VirtuosoClient
+
+
+
+        client = VirtuosoClient.from_env(profile=_get_cli_profile())
+
+        if list_roots:
+
+            client_payload = client.search_docs("", limit=0, rebuild_index=rebuild_index)
+
+            payload = {
+
+                "ok": True,
+
+                "doc_roots": client_payload.get("doc_roots", []),
+
+                "results": [],
+
+            }
+
+        else:
+
+            if not query:
+
+                print("Error: query argument required for 'doc-search'", file=sys.stderr)
+
+                return 1
+
+            client_payload = client.search_docs(query, limit=max(limit, 0), rebuild_index=rebuild_index)
+
+            payload = {
+
+                "ok": True,
+
+                "query": query,
+
+                "doc_roots": client_payload.get("doc_roots", []),
+
+                "results": client_payload.get("results", []),
+
+            }
+
+
+
+    if not payload.get("doc_roots") and not list_roots:
+
+        if doc_roots:
+
+            print(
+
+                "Error: no existing Cadence doc roots found for --doc-root.",
+
+                file=sys.stderr,
+
+            )
+
+        else:
+
+            print(
+
+                "Error: no Cadence doc roots found. Pass --doc-root or configure "
+
+                "a Virtuoso Bridge profile with access to the Cadence installation.",
+
+                file=sys.stderr,
+
+            )
+
+        return 1
+
+
+
+    if json_output:
+
+        print(_json.dumps(payload, indent=2, ensure_ascii=False))
+
+        return 0
+
+
+
+    if list_roots:
+
+        for root in payload["doc_roots"]:
+
+            print(root)
+
+        return 0
+
+
+
+    for result in payload.get("results", []):
+
+        if not isinstance(result, dict):
+
+            continue
+
+        location = result.get("target_relative_path") or result.get("relative_path")
+
+        title = result.get("title") or location
+
+        line = result.get("line")
+
+        suffix = f":{line}" if line else ""
+
+        print(f"{location}{suffix} {title}")
+
+        snippet = result.get("snippet")
+
+        if snippet:
+
+            print(f"  {snippet}")
+
+    return 0
+
+
+
+
+
+def cli_windows() -> int:
+
+    """List all open Virtuoso windows.
+
+
+
+    Annotates the focused line with its bound maestro session (when
+
+    the focused window is an ADE Assembler) and lists all open
+
+    sessions in a footer.  All info comes from a single SKILL round-
+
+    trip — no scp.
+
+    """
+
+    _load_cli_env()
+
+    import sys
+
+    from virtuoso_bridge import VirtuosoClient
+
+    from virtuoso_bridge.virtuoso.maestro.reader._parse_skill import (
+
+        _parse_skill_str_list,
+
+    )
+
+
+
+    client = VirtuosoClient.from_env()
+
+    windows = client.list_windows()
+
+    if not windows:
+
+        print("No windows found.")
+
+        return 1
+
+
+
+    # One SKILL call → focused window number + focused window's bound
+
+    # maestro session id (via davSession attribute) + all open sessions.
+
+    focused_num = ""
+
+    focused_session = ""
+
+    sessions: list[str] = []
+
+    try:
+
+        r = client.execute_skill(
+
+            "let((w) w = hiGetCurrentWindow() list("
+
+            "if(w sprintf(nil \"%d\" w~>windowNum) \"\")"
+
+            " if(w w->davSession \"\")"
+
+            " maeGetSessions()))"
+
+        )
+
+        out = (r.output or "").strip()
+
+        if out.startswith("(") and out.endswith(")"):
+
+            inner = out[1:-1].strip()
+
+            # First two tokens are quoted strings; the rest is the
+
+            # ``maeGetSessions()`` list literal.
+
+            m = re.match(r'\s*"([^"]*)"\s*"([^"]*)"\s*(.*)', inner, re.DOTALL)
+
+            if m:
+
+                focused_num = m.group(1).strip()
+
+                focused_session = m.group(2).strip()
+
+                sessions = _parse_skill_str_list(m.group(3).strip())
+
+    except Exception:
+
+        pass
+
+
+
+    use_color = sys.stdout.isatty()
+
+    BOLD = "\033[1m" if use_color else ""
+
+    RESET = "\033[0m" if use_color else ""
+
+
+
+    focused_name = next(
+
+        (w["name"] for w in windows if w["num"] == focused_num), "")
+
+    if focused_num:
+
+        label = f"{focused_num}  {focused_name}" if focused_name else focused_num
+
+        suffix = f"  [{focused_session}]" if focused_session else ""
+
+        print(f"Focused: {BOLD}{label}{RESET}{suffix}\n")
+
+
+
+    for w in windows:
+
+        is_focused = w["num"] == focused_num
+
+        marker = "*" if is_focused else " "
+
+        name = f"{BOLD}{w['name']}{RESET}" if is_focused else w["name"]
+
+        print(f"{marker} {w['num']:>4}  {name}")
+
+
+
+    if sessions:
+
+        print()
+
+        print(f"Maestro sessions ({len(sessions)}): {', '.join(sessions)}")
+
+    return 0
+
+
+
+
+
+def cli_snapshot() -> int:
+
+    """Snapshot the currently-focused Virtuoso window.
+
+
+
+    Three modes:
+
+      default     : brief one-screen summary to stdout (fast —
+
+                     brief_bundle only, ~150ms).
+
+      ``-o ROOT`` : full ``snapshot(output_root=ROOT)`` — pure SKILL +
+
+                     5 scp's; writes maestro.sdb + active.state (raw) +
+
+                     state_from_sdb.xml + state_from_active_state.xml
+
+                     (filtered) + state_from_skill.json + histories.json
+
+                     + latest_history.json + <history>/ run artifacts.
+
+      ``--json``  : full in-memory snapshot dict as JSON to stdout.
+
+    """
+
+    _load_cli_env()
+
+    import json
+
+    import re
+
+    import sys
+
+    from virtuoso_bridge import VirtuosoClient
+
+    from virtuoso_bridge.virtuoso import snapshot as poly_snapshot
+
+    from virtuoso_bridge.virtuoso.snapshot import classify_window
+
+
+
+    client = VirtuosoClient.from_env()
+
+    opts = _SNAPSHOT_OPTS
+
+
+
+    # Focused window title — decode SKILL octal escapes (e.g. \256 -> ®).
+
+    title = (client.execute_skill(
+
+        'let((cw) cw = hiGetCurrentWindow() if(cw hiGetWindowName(cw) ""))'
+
+    ).output or "").strip().strip('"')
+
+    title = re.sub(r'\\(\d{3})', lambda m: chr(int(m.group(1), 8)), title)
+
+    kind = classify_window(title)
+
+
+
+    # Mode 1: -o ROOT — full disk snapshot (maestro only for now).
+
+    if opts["output_root"] is not None:
+
+        if kind != "maestro":
+
+            print(f"[{kind}] {title}", file=sys.stderr)
+
+            print(f"-o ROOT only supports maestro for now.", file=sys.stderr)
+
+            return 1
+
+        result = client.maestro.snapshot(
+
+            output_root=opts["output_root"],
+
+            history=opts.get("history"),
+
+        )
+
+        hist = result.get("latest_history") or ""
+
+        if hist:
+
+            print(f"[snapshot] history: {hist}")
+
+        print(result.get("output_dir", ""))
+
+        return 0
+
+
+
+    # Mode 2: --json — full in-memory dict to stdout.
+
+    if opts["json"]:
+
+        result = poly_snapshot(client) if kind != "maestro" else poly_snapshot(client)
+
+        json.dump(result, sys.stdout, indent=2, ensure_ascii=False, default=str)
+
+        sys.stdout.write("\n")
+
+        return 0
+
+
+
+    # Mode 3 (default): brief stdout summary.
+
+    if kind == "unknown":
+
+        print(f"no Virtuoso window in focus  ({title or '(no title)'})", file=sys.stderr)
+
+        return 1
+
+    if kind != "maestro":
+
+        # Other kinds: just identify, no commentary.
+
+        print(f"[{kind}] {title}")
+
+        return 0
+
+
+
+    # Maestro brief: just call snapshot() (no output_root) and render
+
+    # its sparse dict.  2 SKILL round-trips total, no scp.  ~150ms.
+
+    snap = client.maestro.snapshot()
+
+    _print_maestro_brief(snap)
+
+    return 0
+
+
+
+
+
+_BRIEF_INCLUDE_PREFIXES = (
+
+    "ddGetObj(",                              # lib readPath
+
+    "maeGetSetup(",                           # test name(s)
+
+    "maeGetEnabledAnalysis(",                 # analysis names
+
+    "maeGetAnalysis(",                        # per-analysis settings
+
+)
+
+
+
+
+
+def _print_maestro_brief(d: dict) -> None:
+
+    """Dump high-signal SKILL sections to stdout, ``state_from_skill.txt``
+
+    format (``[label]`` + verbatim value).  Whitelist of probe prefixes
+
+    above — new probes default to disk-dump-only.  ``snapshot -o ROOT``
+
+    keeps the full set.  No alist→dict parsing; no path lines (paths
+
+    can't be verified without scp)."""
+
+    from virtuoso_bridge.virtuoso.maestro.reader.snapshot import format_skill_sections
+
+    sections = [(label, raw) for label, raw in (d.get("raw_sections") or [])
+
+                if any(label.startswith(p) for p in _BRIEF_INCLUDE_PREFIXES)]
+
+    text = format_skill_sections(sections)
+
+    if text:
+
+        print(text, end="")
+
+
+
+
+
+def cli_export_visio() -> int:
+
+    """Export a schematic to Microsoft Visio."""
+
+    _load_cli_env()
+
+    from virtuoso_bridge import VirtuosoClient
+
+    from virtuoso_bridge.virtuoso.visio import export_schematic_to_visio
+
+
+
+    opts = _EXPORT_VISIO_OPTS
+
+    client = VirtuosoClient.from_env(profile=_get_cli_profile())
+
+    lib = opts["lib"]
+
+    cell = opts["cell"]
+
+    if not lib or not cell:
+
+        lib, cell, _ = client.get_current_design()
+
+        if not lib or not cell:
+
+            print("Usage: virtuoso-bridge export-visio LIB CELL [-o output.vsdx]")
+
+            print("       or open a schematic in Virtuoso first.")
+
+            return 1
+
+
+
+    exclude_pins = [] if opts["include_body_pins"] else opts["exclude_pins"]
+
+    output = opts["output"] or f"{lib}_{cell}.vsdx"
+
+    try:
+
+        model = export_schematic_to_visio(
+
+            client,
+
+            lib,
+
+            cell,
+
+            output_path=output,
+
+            stencil_path=opts["stencil"],
+
+            visible=not opts["hidden"],
+
+            scale=opts["scale"],
+
+            exclude_nets=opts["exclude_nets"],
+
+            exclude_pins=exclude_pins,
+
+        )
+
+    except RuntimeError as exc:
+
+        print(f"Error: {exc}")
+
+        return 1
+
+
+
+    print(
+
+        f"Exported {lib}/{cell}/schematic: "
+
+        f"{len(model.instances)} instances, {len(model.nets)} routed nets"
+
+    )
+
+    print(str(output))
+
+    return 0
+
+
+
+
+
+def cli_screenshot() -> int:
+
+    """Take a screenshot of a Virtuoso window."""
+
+    _load_cli_env()
+
+    from virtuoso_bridge import VirtuosoClient
+
+
+
+    client = VirtuosoClient.from_env()
+
+    raw_target = _SCREENSHOT_TARGET[0]
+
+
+
+    # Resolve target
+
+    target: str | int
+
+    if raw_target.isdigit():
+
+        target = int(raw_target)
+
+    else:
+
+        target = raw_target
+
+
+
+    output = _SCREENSHOT_OUTPUT[0]
+
+
+
+    result = client.screenshot(output=output, target=target)
+
+    if result.status.value != "success":
+
+        print(f"Error: {result.errors[0] if result.errors else 'screenshot failed'}")
+
+        return 1
+
+    print(result.output)
+
+    return 0
+
+
+
+
+
+def build_parser() -> argparse.ArgumentParser:
+
+    parser = argparse.ArgumentParser(prog="virtuoso-bridge")
+
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    sp_init = subparsers.add_parser("init", help="Create a starter .env")
+
+    sp_init.add_argument(
+
+        "remote", nargs="?", default=None,
+
+        help="Remote target as [user@]host (e.g. designer1@thu-wei). "
+
+             "Port hash uses the remote username when given.",
+
+    )
+
+    sp_init.add_argument(
+
+        "-J", "--jump", default=None,
+
+        help="Jump host as [user@]host (e.g. designer1@bastion.example.com)",
+
+    )
+
+    sp_init.add_argument(
+
+        "--force", action="store_true",
+
+        help="Overwrite an existing .env",
+
+    )
+
+    for name, hlp in [
+
+        ("start", "Start SSH tunnel + deploy daemon"),
+
+        ("stop", "Stop the SSH tunnel"),
+
+        ("restart", "Restart SSH tunnel + daemon"),
+
+        ("status", "Check tunnel + daemon status"),
+
+        ("license", "Check Spectre license availability"),
+
+    ]:
+
+        sp = subparsers.add_parser(name, help=hlp)
+
+        sp.add_argument("-p", "--profile", default=None,
+
+                        help="Connection profile (reads VB_*_<profile> env vars)")
+
+        sp.add_argument("--env", default=None,
+
+                        help="Explicit .env file path (highest priority)")
+
+        if name == "start":
+
+            sp.add_argument("--bind-venv", action="store_true",
+
+                            help="Bind the active virtualenv to this -p profile before starting")
+
+
+
+    sp_profile = subparsers.add_parser("profile", help="Show or edit profile bindings")
+
+    profile_sub = sp_profile.add_subparsers(dest="profile_action", required=True)
+
+    sp_profile_show = profile_sub.add_parser("show", help="Show resolved profile")
+
+    sp_profile_show.add_argument("--env", default=None,
+
+                                 help="Explicit .env file path (highest priority)")
+
+    sp_profile_bind = profile_sub.add_parser("bind", help="Bind current virtualenv to a profile")
+
+    sp_profile_bind.add_argument("profile", help="Profile name to bind")
+
+    sp_profile_bind.add_argument("--venv", action="store_true",
+
+                                 help="Bind the current virtualenv (the only supported scope)")
+
+    sp_profile_bind.add_argument("--env", default=None,
+
+                                 help="Explicit .env file path (highest priority)")
+
+    sp_profile_clear = profile_sub.add_parser("clear", help="Clear current virtualenv profile binding")
+
+    sp_profile_clear.add_argument("--venv", action="store_true",
+
+                                  help="Clear the current virtualenv binding (the only supported scope)")
+
+    sp_profile_clear.add_argument("--env", default=None,
+
+                                  help="Explicit .env file path (highest priority)")
+
+
+
+    sp_load = subparsers.add_parser(
+
+        "load",
+
+        help="Execute a SKILL .il file in the running Virtuoso session",
+
+        description=(
+
+            "Equivalent to typing `load(\"<file>\")` in the CIW.  SKILL\n"
+
+            "reads the original file, so any error keeps the original\n"
+
+            "file path + line number (no temp-wrapper pollution).  In\n"
+
+            "SSH mode the file is uploaded automatically.\n\n"
+
+            "Output: full VirtuosoResult as JSON on stdout (status,\n"
+
+            "output, errors, warnings, execution_time, metadata).\n\n"
+
+            "VSCode .vscode/tasks.json snippet:\n"
+
+            '  { "label": "Load SKILL", "type": "shell",\n'
+
+            '    "command": "virtuoso-bridge load \\"${file}\\"" }'
+
+        ),
+
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+
+    )
+
+    sp_load.add_argument("file", help="Path to the .il file to execute")
+
+    sp_load.add_argument("-p", "--profile", default=None,
+
+                         help="Connection profile (reads VB_*_<profile> env vars)")
+
+    sp_load.add_argument("--env", default=None,
+
+                         help="Explicit .env file path (highest priority)")
+
+    sp_load.add_argument("--timeout", type=int, default=60,
+
+                         help="SKILL execution timeout in seconds (default: 60)")
+
+    sp_load.add_argument("--quiet", action="store_true",
+
+                         help="Suppress JSON output; only the exit code is reported")
+
+
+
+    sp_eval = subparsers.add_parser(
+
+        "eval",
+
+        help="Execute a SKILL expression (one-liner) in the running Virtuoso session",
+
+        description=(
+
+            "Run an inline SKILL expression — companion to `load` for\n"
+
+            "one-liners and round-trip checks.\n\n"
+
+            "Two input modes:\n"
+
+            "  virtuoso-bridge eval 'getCurrentTime()'\n"
+
+            "  echo 'printf(\"hi\\n\")' | virtuoso-bridge eval --stdin\n\n"
+
+            "--stdin sidesteps shell quoting for snippets with embedded\n"
+
+            "quotes, parens, or quoted symbols, and is the natural way\n"
+
+            "to feed multi-line SKILL via heredoc.\n\n"
+
+            "Multi-statement input is supported transparently — the\n"
+
+            "expression is wrapped in `progn(...)` before sending, and\n"
+
+            "the value of the last form is returned.\n\n"
+
+            "Output: full VirtuosoResult as JSON on stdout (same shape\n"
+
+            "as `load`)."
+
+        ),
+
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+
+    )
+
+    sp_eval.add_argument("skill", nargs="?", default=None,
+
+                         help="SKILL expression to evaluate (omit when using --stdin)")
+
+    sp_eval.add_argument("--stdin", action="store_true",
+
+                         help="Read the SKILL expression from stdin instead of argv")
+
+    sp_eval.add_argument("-p", "--profile", default=None,
+
+                         help="Connection profile (reads VB_*_<profile> env vars)")
+
+    sp_eval.add_argument("--env", default=None,
+
+                         help="Explicit .env file path (highest priority)")
+
+    sp_eval.add_argument("--timeout", type=int, default=60,
+
+                         help="SKILL execution timeout in seconds (default: 60)")
+
+    sp_eval.add_argument("--quiet", action="store_true",
+
+                         help="Suppress JSON output; only the exit code is reported")
+
+
+
+    sp_dismiss = subparsers.add_parser(
+
+        "dismiss-dialog", help="Find and dismiss blocking Virtuoso GUI dialogs")
+
+    sp_dismiss.add_argument("-p", "--profile", default=None,
+
+                            help="Connection profile")
+
+    sp_dismiss.add_argument("--env", default=None,
+
+                            help="Explicit .env file path (highest priority)")
+
+
+
+    sp_list_windows = subparsers.add_parser(
+
+        "list-windows", help="List Virtuoso-related X11 windows")
+
+    sp_list_windows.add_argument("--json", action="store_true",
+
+                                 help="Output a JSON array")
+
+    sp_list_windows.add_argument("-p", "--profile", default=None,
+
+                                 help="Connection profile")
+
+    sp_list_windows.add_argument("--env", default=None,
+
+                                 help="Explicit .env file path (highest priority)")
+
+
+
+    sp_dismiss_window = subparsers.add_parser(
+
+        "dismiss-window", help="Dismiss one explicit X11 window id")
+
+    sp_dismiss_window.add_argument("window_id", help="X11 window id, e.g. 0x4203583")
+
+    sp_dismiss_window.add_argument(
+
+        "--action",
+
+        default="enter",
+
+        choices=["enter", "escape", "alt-y", "alt-n"],
+
+        help="Key action to send (default: enter)",
+
+    )
+
+    sp_dismiss_window.add_argument("-p", "--profile", default=None,
+
+                                   help="Connection profile")
+
+    sp_dismiss_window.add_argument("--env", default=None,
+
+                                   help="Explicit .env file path (highest priority)")
+
+
+
+    sp_screenshot = subparsers.add_parser(
+
+        "screenshot", help="Take a screenshot of a Virtuoso window")
+
+    sp_screenshot.add_argument(
+
+        "target", nargs="?", default="ciw",
+
+        help="ciw (default), current, a view name (schematic/layout/maestro), or window number")
+
+    sp_screenshot.add_argument("-o", "--output", default=None,
+
+                               help="Output file or directory (default: user artifact screenshots dir)")
+
+    sp_screenshot.add_argument("-p", "--profile", default=None,
+
+                               help="Connection profile")
+
+    sp_screenshot.add_argument("--env", default=None,
+
+                               help="Explicit .env file path (highest priority)")
+
+
+
+    sp_skill_find = subparsers.add_parser(
+
+        "skill-find",
+
+        help="Search SKILL API documentation from Cadence .fnd files",
+
+        description=(
+
+            "Queries the Cadence SKILL Finder database (``doc/finder/SKILL/*.fnd``)"
+
+            " on the remote server.  On first run the database is downloaded to the\n"
+
+            "user cache directory under ``skill_finder/<host>``;\n"
+
+            "subsequent runs use the cache without additional network traffic.\n\n"
+
+            "Search modes:\n"
+
+            "  fuzzy   case-insensitive substring match (default)\n"
+
+            "  prefix  name starts with query\n"
+
+            "  suffix  name ends with query\n"
+
+            "  exact   exact name match\n"
+
+            "  regex   Python regular expression match\n\n"
+
+            "Examples:\n"
+
+            "  virtuoso-bridge skill-find dbOpen\n"
+
+            '  virtuoso-bridge skill-find dbOpen --mode prefix\n'
+
+            '  virtuoso-bridge skill-find "^db.*" --mode regex\n'
+
+        ),
+
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+
+    )
+
+    sp_skill_find.add_argument("query", nargs="?", default=None,
+
+                          help="Search string or pattern (required unless --json is set)")
+
+    sp_skill_find.add_argument("-m", "--mode", default="fuzzy",
+
+                          choices=["fuzzy", "prefix", "suffix", "exact", "regex"],
+
+                          help="Search mode (default: fuzzy)")
+
+    sp_skill_find.add_argument("-n", "--limit", type=int, default=50,
+
+                          help="Maximum results to return (default: 50)")
+
+    sp_skill_find.add_argument("--include-desc", action="store_true",
+
+                          help="Also search in the description field")
+
+    sp_skill_find.add_argument("--json", action="store_true",
+
+                          help="Output results as JSON")
+
+    sp_skill_find.add_argument("-p", "--profile", default=None,
+
+                          help="Connection profile")
+
+    sp_skill_find.add_argument("--env", default=None,
+
+                          help="Explicit .env file path (highest priority)")
+
+
+
+    sp_skill_info = subparsers.add_parser(
+
+        "skill-info",
+
+        help="Get More Info documentation for a SKILL function",
+
+        description=(
+
+            "Retrieves the More Info documentation for a specific SKILL function.\n"
+
+            "The More Info system provides detailed HTML documentation for Cadence\n"
+
+            "SKILL functions, indexed in ``doc/api_more_info/api_more_info.tgf``."
+
+        ),
+
+    )
+
+    sp_skill_info.add_argument("func_name", help="SKILL function name to look up")
+
+    sp_skill_info.add_argument(
+
+        "--json", action="store_true", help="Output results as JSON"
+
+    )
+
+    sp_skill_info.add_argument("-p", "--profile", default=None, help="Connection profile")
+
+    sp_skill_info.add_argument("--env", default=None, help="Explicit .env file path (highest priority)")
+
+
+
+    sp_doc_search = subparsers.add_parser(
+
+        "doc-search",
+
+        help="Search installed Cadence documentation",
+
+        description=(
+
+            "Searches Cadence documentation roots, including HTML/text content "
+
+            "and .tgf topic maps. Pass --doc-root for explicit local/offline "
+
+            "search, or omit it to discover docs through the active "
+
+            "Virtuoso Bridge profile."
+
+        ),
+
+    )
+
+    sp_doc_search.add_argument("query", nargs="?", default=None, help="Search query")
+
+    sp_doc_search.add_argument(
+
+        "--doc-root",
+
+        type=Path,
+
+        action="append",
+
+        default=[],
+
+        help="Cadence doc root; may be repeated",
+
+    )
+
+    sp_doc_search.add_argument("--list-roots", action="store_true", help="Print resolved doc roots and exit")
+
+    sp_doc_search.add_argument("-n", "--limit", type=int, default=10, help="Maximum results to return")
+
+    sp_doc_search.add_argument("--json", action="store_true", help="Output results as JSON")
+
+    sp_doc_search.add_argument("--rebuild-index", action="store_true", help="Force rebuilding the local documentation search index")
+
+    sp_doc_search.add_argument("-p", "--profile", default=None, help="Connection profile")
+
+    sp_doc_search.add_argument("--env", default=None, help="Explicit .env file path (highest priority)")
+
+
+
+    sp_windows = subparsers.add_parser("windows", help="List all open Virtuoso windows")
+
+    sp_windows.add_argument("-p", "--profile", default=None,
+
+                            help="Connection profile")
+
+    sp_windows.add_argument("--env", default=None,
+
+                            help="Explicit .env file path (highest priority)")
+
+
+
+    sp_snap = subparsers.add_parser(
+
+        "snapshot",
+
+        help="Brief summary of the focused Virtuoso window "
+
+             "(maestro/schematic/...).  -o ROOT for full disk dump; "
+
+             "--json for full in-memory JSON.")
+
+    sp_snap.add_argument("-o", "--output-root", default=None,
+
+                         help="Full snapshot to disk under this dir "
+
+                              "(slow: includes latest history log + spectre.out tail). "
+
+                              "Without -o, prints a brief summary to stdout.")
+
+    sp_snap.add_argument("--json", action="store_true",
+
+                         help="Print full snapshot dict as JSON to stdout (overrides default brief)")
+
+    sp_snap.add_argument("--history", default=None,
+
+                         help="Pin to a specific maestro history (e.g. Interactive.160). "
+
+                              "Skips the mtime/current-history auto-pick. "
+
+                              "Only meaningful with -o.")
+
+    sp_snap.add_argument("-p", "--profile", default=None,
+
+                         help="Connection profile")
+
+    sp_snap.add_argument("--env", default=None,
+
+                         help="Explicit .env file path (highest priority)")
+
+
+
+    sp_visio = subparsers.add_parser(
+
+        "export-visio",
+
+        help="Export a schematic to Microsoft Visio (Windows + pywin32)")
+
+    sp_visio.add_argument("lib", nargs="?", default=None,
+
+                          help="Virtuoso library name")
+
+    sp_visio.add_argument("cell", nargs="?", default=None,
+
+                          help="Virtuoso cell name")
+
+    sp_visio.add_argument("-o", "--output", default=None,
+
+                          help="Output .vsdx/.vsd file path")
+
+    sp_visio.add_argument("--stencil", default=None,
+
+                          help="Visio stencil (.vss/.vssx); defaults to circuit.vss")
+
+    sp_visio.add_argument("--scale", type=float, default=1.0,
+
+                          help="Scale factor applied to Virtuoso coordinates")
+
+    sp_visio.add_argument("--exclude-net", dest="exclude_nets",
+
+                          action="append", default=[],
+
+                          help="Net name to skip while routing (repeatable)")
+
+    sp_visio.add_argument("--exclude-pin", dest="exclude_pins",
+
+                          action="append", default=["B"],
+
+                          help="Pin name to skip while routing (default: B; repeatable)")
+
+    sp_visio.add_argument("--include-body-pins", action="store_true",
+
+                          help="Do not skip MOS body pins")
+
+    sp_visio.add_argument("--hidden", action="store_true",
+
+                          help="Run Visio hidden while exporting")
+
+    sp_visio.add_argument("-p", "--profile", default=None,
+
+                          help="Connection profile")
+
+    sp_visio.add_argument("--env", default=None,
+
+                          help="Explicit .env file path (highest priority)")
+
+
+
+    return parser
+
+
+
+
+
+def _make_stdio_safe() -> None:
+
+    # Window/cell names may contain non-ASCII chars (e.g. '®' in Cadence
+
+    # titles). On hosts whose locale is GBK / cp1252 / etc., the default
+
+    # stdout encoding cannot represent them and print() raises
+
+    # UnicodeEncodeError. Force UTF-8 (every modern terminal renders it
+
+    # regardless of LANG) and keep errors='replace' as a last-resort
+
+    # safety net.
+
+    import sys
+
+    for stream in (sys.stdout, sys.stderr):
+
+        reconfigure = getattr(stream, "reconfigure", None)
+
+        if reconfigure is not None:
+
+            try:
+
+                reconfigure(encoding="utf-8", errors="replace")
+
+            except Exception:
+
+                pass
+
+
+
+
+
+def main(argv: list[str] | None = None) -> int:
+
+    _make_stdio_safe()
+
+    parser = build_parser()
+
+    args = parser.parse_args(argv)
+
+    _CLI_PROFILE[0] = None
+
+    set_runtime_env_file(getattr(args, "env", None))
+
+    if getattr(args, "bind_venv", False):
+
+        profile_arg = getattr(args, "profile", None)
+
+        if not profile_arg:
+
+            parser.error("--bind-venv requires -p/--profile")
+
+        from virtuoso_bridge.profile import bind_venv_profile
+
+        try:
+
+            bind_venv_profile(profile_arg)
+
+        except Exception as exc:
+
+            parser.error(str(exc))
+
+    from virtuoso_bridge.profile import resolve_profile
+
+    profile = resolve_profile(getattr(args, "profile", None))
+
+    if profile is not None:
+
+        _CLI_PROFILE[0] = profile
+
+    dispatch = {
+
+        "init": lambda: cli_init(
+
+            remote=getattr(args, "remote", None),
+
+            jump=getattr(args, "jump", None),
+
+            force=getattr(args, "force", False),
+
+        ),
+
+        "profile": lambda: cli_profile(
+
+            action=getattr(args, "profile_action"),
+
+            profile=getattr(args, "profile", None),
+
+        ),
+
+        "start": cli_start,
+
+        "stop": cli_stop,
+
+        "restart": cli_restart,
+
+        "status": cli_status,
+
+        "license": cli_license,
+
+        "load": lambda: cli_load(
+
+            file=getattr(args, "file"),
+
+            timeout=getattr(args, "timeout", 60),
+
+            quiet=getattr(args, "quiet", False),
+
+        ),
+
+        "eval": lambda: cli_eval(
+
+            skill=getattr(args, "skill", None),
+
+            stdin=getattr(args, "stdin", False),
+
+            timeout=getattr(args, "timeout", 60),
+
+            quiet=getattr(args, "quiet", False),
+
+        ),
+
+        "dismiss-dialog": cli_dismiss_dialog,
+
+        "list-windows": lambda: cli_list_windows(
+
+            json_output=getattr(args, "json", False),
+
+        ),
+
+        "dismiss-window": lambda: cli_dismiss_window(
+
+            window_id=getattr(args, "window_id"),
+
+            action=getattr(args, "action", "enter"),
+
+        ),
+
+        "screenshot": cli_screenshot,
+
+        "windows": cli_windows,
+
+        "snapshot": cli_snapshot,
+
+        "export-visio": cli_export_visio,
+
+        "skill-find": lambda: cli_find(
+
+            query=getattr(args, "query", None),
+
+            mode=getattr(args, "mode", "fuzzy"),
+
+            limit=getattr(args, "limit", 50),
+
+            include_desc=getattr(args, "include_desc", False),
+
+            json_output=getattr(args, "json", False),
+
+        ),
+
+        "skill-info": lambda: cli_skill_info(
+
+            func_name=getattr(args, "func_name", None) or "",
+
+            json_output=getattr(args, "json", False),
+
+        ),
+
+        "doc-search": lambda: cli_doc_search(
+
+            query=getattr(args, "query", None),
+
+            doc_roots=getattr(args, "doc_root", []),
+
+            limit=getattr(args, "limit", 10),
+
+            list_roots=getattr(args, "list_roots", False),
+
+            json_output=getattr(args, "json", False),
+
+            rebuild_index=getattr(args, "rebuild_index", False),
+
+        ),
+
+    }
+
+    screenshot_target = getattr(args, "target", None)
+
+    if screenshot_target is not None:
+
+        _SCREENSHOT_TARGET[0] = screenshot_target
+
+    screenshot_output = getattr(args, "output", None)
+
+    if screenshot_output is not None:
+
+        _SCREENSHOT_OUTPUT[0] = screenshot_output
+
+    if args.command == "snapshot":
+
+        for k in _SNAPSHOT_OPTS:
+
+            v = getattr(args, k, None)
+
+            if v is not None:
+
+                _SNAPSHOT_OPTS[k] = v
+
+    if args.command == "export-visio":
+
+        for k in _EXPORT_VISIO_OPTS:
+
+            v = getattr(args, k, None)
+
+            if v is not None:
+
+                _EXPORT_VISIO_OPTS[k] = v
+
+    return dispatch[args.command]()
+
+
+
+
+
+# Global profile for CLI commands (avoids changing all function signatures)
+
+_CLI_PROFILE: list[str | None] = [None]
+
+_SCREENSHOT_OUTPUT: list[str | None] = [None]
+
+
+
+
+
+def _get_cli_profile() -> str | None:
+
+    return _CLI_PROFILE[0]

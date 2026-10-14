@@ -1,0 +1,4 @@
+interface:
+  display_name: "Operate Virtuoso Bridge"
+  short_description: "Connect Codex to Virtuoso safely"
+  default_prompt: "Use $operate-virtuoso-bridge to verify the bridge and inspect the current Virtuoso design safely."

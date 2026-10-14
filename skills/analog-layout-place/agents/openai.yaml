@@ -1,0 +1,6 @@
+interface:
+  display_name: "Analog Layout Place"
+  short_description: "Place analog PCells with matching and diffusion sharing"
+  default_prompt: "Use $analog-layout-place to generate or refine a target-PDK placement, including evidence-gated same-net source-diffusion sharing when applicable; materialize only when I explicitly name a new Virtuoso destination."
+policy:
+  allow_implicit_invocation: true

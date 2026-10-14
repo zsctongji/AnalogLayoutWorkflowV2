@@ -1,0 +1,4 @@
+interface:
+  display_name: "Analog Layout LVS"
+  short_description: "Diagnose LVS and control symmetry-preserving layout repairs"
+  default_prompt: "Use $analog-layout-lvs to diagnose LVS errors and plan controlled symmetric repairs in a new layout cell, preserving devices and the reference schematic."

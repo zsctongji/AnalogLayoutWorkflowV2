@@ -1,0 +1,25 @@
+# Initial-placement dispatch efficiency
+
+## Consolidate preparation before writing
+
+Matching defaults to common_axis without additional questions about that default. Only actual user requests may create per-group `constraints.matching_overrides`, for example `{"PAIR":{"mode":"common_centroid","source":"user","instruction":"Use common-centroid matching for this differential pair"}}`. Supported modes are common_axis/common_centroid/explicit_pattern. instruction must come from the user, rather than automatic inference. User-specified arrangements may be recorded with explicit_pattern but cannot make other groups common-centroid. handoff matching_policy applies to every stage; place preflight rejects common_centroid pattern_mode/matching_mode without per-group user authorization. Incidentally equal geometric centroids do not enable common-centroid topology. If legacy candidates use default common-centroid matching, replan them first; changing dispatch policy does not automatically move existing OA objects.
+
+1. Read one saved schematic, PDK binding and user decision record; record module matching topology, common axis, dummy ownership and scratch policy. Do not automatically convert common-axis into common-centroid. Bundle questions only for actual ambiguities, and continue using existing decisions.
+2. Build a multiplicity inventory for every device, including capacitors and other passives. Compare source m with candidate explicit m=1 copies, copy_count/index, masters, nets and dummy modules. Fix missing copies in candidates before writing OA. Existing skills/PDK must establish each device type's m semantics; block uncertainties rather than guessing geometric implementation.
+3. Select one initial-placement executor. When legal relative placement and explicit arrays already exist, do not start a second planner for duplicate evidence. Retain the selected skill's required measurements/checks. Invoke its planning mode first and the writer only after candidates are complete.
+4. Reuse actual PCell-variant measurements keyed by PDK/master, all effective parameters and applicable orientations. Remeasure variants with changed parameters/identities. Review candidate matching, environments on both sides of dummies and gate-access/guard-ring reservations early. Assign unknown conditions to the responsible skill for probing; planning checks do not prove actual contacts are complete.
+
+## Invocation and resume
+
+- Reuse the same bridge session. Health checks occur before the first live operation, after connection failure or after remote CAD/PDK identity changes. Do not repeat installation/discovery for every stage or blindly rebuild healthy tunnels. Fresh saved-revision/readback checks before actual writes still follow the original skill.
+- In multi-stage work, read only the current skill and required references; do not reread unchanged instructions or repeat external research. Batch independent offline reads; keep live writes and dependent steps sequential.
+- Resume using `workflow_runtime.next` to select the earliest invalid dependency, retaining valid upstream evidence. List affected items from actual parameter/position/net/module changes; a new stage does not require repeating all snapshot/build/measure work. Legal diffusion-sharing changes still invalidate affected gate-access and downstream evidence.
+- Complete planning/candidate checks offline before entering one CAD write phase at stage end: apply the complete object set in one batch, save once and read back independently. Shared `VirtuosoBackend.apply_batch` no longer reads/writes per object, and read does not trigger pending writes. Keep different skills and writes to the same OA session serial; do not cache live geometry across save boundaries. See [stage-writes.md](stage-writes.md).
+
+## Executable constraints and timing
+
+`run_stage.py` runs `dispatch_preflight.py` before place execution. state `dispatch_inputs.place.schematic` is a local path/sha256/host record; mutating place also requires `placement_intent` in the same structure. Missing/changed inputs or inconsistent source identity/copies/ports/module ownership return BLOCKED_PREFLIGHT without starting the adapter. Read-only planning may provide only schematic, with expected copy inventory in handoff. Additional fields do not require subskill interface changes.
+
+`checked` hashes repeated artifact paths once within one local validation; the next validation rereads them. Do not reuse caches across operations. The dispatcher supplies reuse policy and valid dependency artifacts in handoff; the original skill's mandatory checks take precedence.
+
+Record preparation, adapter execution, receipt validation, checkpoint and total durations using a monotonic clock. command.json and checkpoints retain execution timings; performance.json retains all timing segments for the invocation. Failures/timeouts also retain command timings. Do not automatically retry actions that may already have written. Adapter duration includes CAD, IPC, network and other time; leave components unmeasured when they cannot be separated, rather than inferring a network bottleneck.

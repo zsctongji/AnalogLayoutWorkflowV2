@@ -1,0 +1,5 @@
+interface:
+  display_name: Analog Layout Iterate
+  short_description: Run the iterate stage with verified inputs
+  default_prompt: Use $analog-layout-iterate for the requested stage, preserving PDK
+    evidence, circuit intent and revision-bound checks.

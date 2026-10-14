@@ -1,0 +1,6 @@
+interface:
+  display_name: "Analog Layout ALIGN"
+  short_description: "Plan, close, refine, and verify analog PCell placement"
+  default_prompt: "Use $analog-layout-align to generate or analyze a target-PDK placement intent with explicit m copies and matching constraints. Keep circuit-specific refinement policy in declarative run inputs; materialize only when I explicitly name a new Virtuoso destination, with verified non-electrical D/<net> annotations by default."
+policy:
+  allow_implicit_invocation: true

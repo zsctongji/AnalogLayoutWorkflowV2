@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "analog-layout-flow"
+version = "0.2.0"
+description = "Reusable analog layout skills with revision-bound checks and routing backends"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-subtests>=0.14", "PyYAML>=6"]
+analysis = ["numpy>=1.26", "scipy>=1.11", "matplotlib>=3.8", "fpdf2>=2.7"]
+
+[project.scripts]
+alflow = "analog_layout_workflow.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--import-mode=importlib"
+pythonpath = ["src"]

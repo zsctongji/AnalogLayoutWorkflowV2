@@ -1,0 +1,3 @@
+interface:
+  display_name: "Analog Layout Guard Ring"
+  short_description: "Plan and verify PDK-qualified Virtuoso guard rings after ALIGN placement"

@@ -1,0 +1,15 @@
+{
+  "project_root": "/path/to/design/workspace",
+  "ic_root": "/path/to/cadence/IC",
+  "calibre_root": "/path/to/calibre",
+  "technology_library": "YOUR_PDK",
+  "cadence_license": "CONFIGURE_PRIVATELY",
+  "mentor_license": "CONFIGURE_PRIVATELY",
+  "metal_option": "CONFIRM_FROM_PDK",
+  "layer_map": "/private/path/to/layer-map",
+  "drc_deck": "/private/path/to/drc-deck",
+  "lvs_deck": "/private/path/to/lvs-deck",
+  "qualified_master_libraries": [],
+  "qualified_defines": {},
+  "qualification_scope": "UNQUALIFIED_TEMPLATE"
+}

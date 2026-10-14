@@ -1,0 +1,4 @@
+interface:
+  display_name: "Analog Layout DRC"
+  short_description: "Run and close foundry DRC for analog layouts"
+  default_prompt: "Use $analog-layout-drc to run or analyze DRC for this exact layout revision and produce a provenance-bound closure report."

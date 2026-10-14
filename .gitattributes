@@ -1,0 +1,5 @@
+* text=auto eol=lf
+/vendor/virtuoso-bridge-lite/LICENSE binary
+*.png binary
+*.pdf binary
+*.zip binary
