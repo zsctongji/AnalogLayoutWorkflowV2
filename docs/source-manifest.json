@@ -1,7 +1,7 @@
 {
   "schema": "analog-layout-flow.source-manifest/v1",
   "packaged_on": "2026-10-14",
-  "scope": "Source only; no circuit examples, private configuration, design captures or live qualification evidence",
+  "scope": "Source and synthetic offline examples only; no private configuration, historical project data, native design captures or live qualification evidence",
   "skills": [
     "analog-layout-align",
     "analog-layout-diffusion-share",
@@ -67,7 +67,7 @@
     },
     {
       "path": "CONTRIBUTING.md",
-      "sha256": "b01e451575127eb6c7505abe932272a1ca1959ff2cd8d5c006822417a3bdf75b",
+      "sha256": "253354b94dcf0613d31f5a6838d6a3add98206bbeb5ac352041db131ab15f15e",
       "origin": "repository-maintenance"
     },
     {
@@ -77,7 +77,7 @@
     },
     {
       "path": "docs/configuration.md",
-      "sha256": "14c87f6e756addac1474bd5f203e0c52b5c060d8e810a5c5eb57f94df58af40d",
+      "sha256": "9a6c9153fdd4ff91a7fbccf7ef3720f5d4704a864af72c4c99d1508db8abd7fc",
       "origin": "repository-maintenance"
     },
     {
@@ -87,8 +87,83 @@
     },
     {
       "path": "docs/verification.md",
-      "sha256": "02522fe16f8862f852cdb70df5f57ba9fa4e9895085fd7d2426c986133f85326",
+      "sha256": "e762fa996a1df00ff3eb1d1449c5dba79b170ca3f7b54d85f7976b6d76599235",
       "origin": "repository-maintenance"
+    },
+    {
+      "path": "examples/amp_compare_v4/config/circuit.json",
+      "sha256": "9f3bdcd019f0daf46fa83211ea940fe70fcabcfdf3b91924ff0fd02000422431",
+      "origin": "synthetic-offline-example"
+    },
+    {
+      "path": "examples/amp_compare_v4/config/pdk-map.json",
+      "sha256": "b9e13a6dd2920a30ff4715a47ca6403498472c6398bb97e159005df66ad82d46",
+      "origin": "synthetic-offline-example"
+    },
+    {
+      "path": "examples/amp_compare_v4/config/project.json",
+      "sha256": "6044c13a7dfe4b6e846f88ab1c414ca3a8fc45758a6e30d315b7281e4d9671fe",
+      "origin": "synthetic-offline-example"
+    },
+    {
+      "path": "examples/amp_compare_v4/config/routing-policy.json",
+      "sha256": "bbc396fd3626b354efa1ccd0db42378c28676a94afe39d3b926ffc014473ae54",
+      "origin": "synthetic-offline-example"
+    },
+    {
+      "path": "examples/amp_compare_v4/example.json",
+      "sha256": "0cfd3a946e8ac6bf66e56ade1f1ecc7d406ff1ff26a79387d8f3d80a3b54366d",
+      "origin": "synthetic-offline-example"
+    },
+    {
+      "path": "examples/amp_compare_v4/inputs/schematic.json",
+      "sha256": "49865164a73e3bdb8a9f8f4d1f81be433beea93644b7618c68e48b6f9ec0a1fd",
+      "origin": "synthetic-offline-example"
+    },
+    {
+      "path": "examples/amp_compare_v4/netlists/synthetic-schematic.sp",
+      "sha256": "406834494d46fa493ee8af6fa33948f52ac56d598ca132294ec9a27071e00158",
+      "origin": "synthetic-offline-example"
+    },
+    {
+      "path": "examples/amp_compare_v4/README.md",
+      "sha256": "61a29c2470cb08e12c75e7cfb40fbe0058826e167c24fd9384c0ac2d3423ea88",
+      "origin": "synthetic-offline-example"
+    },
+    {
+      "path": "examples/amp_compare_v4/reports/expected.json",
+      "sha256": "da4dcad42939cacdb269b50fa7a100ea043c52d7d0b2ed847355bb666b52244c",
+      "origin": "synthetic-offline-example"
+    },
+    {
+      "path": "examples/amp_compare_v4/reports/README.md",
+      "sha256": "bd73d87f295ac396cef82c5319dce78433af254e3b573e29ab3c96c82ca0cad7",
+      "origin": "synthetic-offline-example"
+    },
+    {
+      "path": "examples/amp_compare_v4/tests/test_example.py",
+      "sha256": "1283bf319d36ba9b6ddd894a7bd0fe4b6f9b8b2b85db79a3d40068128a777e98",
+      "origin": "synthetic-offline-example"
+    },
+    {
+      "path": "examples/amp_compare_v4/work/build_route.py",
+      "sha256": "5df5dfe8cb2763c1b71d6b18322f5b33f5f053f6d5932b83f7d5a4e2a6f08d9e",
+      "origin": "synthetic-offline-example"
+    },
+    {
+      "path": "examples/amp_compare_v4/work/common.py",
+      "sha256": "998ae73ae154411110b3c95317c3b501d914c44c68bde71cca6e22275e94489b",
+      "origin": "synthetic-offline-example"
+    },
+    {
+      "path": "examples/amp_compare_v4/work/prepare_inputs.py",
+      "sha256": "b7ad9b30888cc0fa122c38c51c4066025475164b5cec347b2c820082d3ae0187",
+      "origin": "synthetic-offline-example"
+    },
+    {
+      "path": "examples/amp_compare_v4/work/run_example.py",
+      "sha256": "795b8e2cfbdaaa1a3b351d82288cea124aa9c2899e025462d97562b0df5b5d88",
+      "origin": "synthetic-offline-example"
     },
     {
       "path": "LICENSE.md",
@@ -102,7 +177,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "b5468e1b144d55e7fc44363a66af4e5016626bf41fa8ac915b341cca9706aec1",
+      "sha256": "82f087dc59e2ff65a3d466f6208b2f5519e46bfbcfecba71d63e30e70acf9003",
       "origin": "repository-maintenance"
     },
     {
@@ -112,7 +187,7 @@
     },
     {
       "path": "scripts/check_repository.py",
-      "sha256": "36a5cb15396c5f2709891283d5b66b3c6ce0de539f762324108938df1184bd5f",
+      "sha256": "2164e54f0943123641915f458d3b82aadd5eda6ed87d2fb4cd41cee51fae8bac",
       "origin": "repository-maintenance"
     },
     {
@@ -122,12 +197,12 @@
     },
     {
       "path": "scripts/run_tests.py",
-      "sha256": "8b915f23a391fdc592718b37cce7e68e0dfee76a9509829d2ffb87c5c9923d11",
+      "sha256": "dcb5f0760822ecb822ee3ef12caca40851718ecbaff0698b193d7fd8016a4216",
       "origin": "repository-maintenance"
     },
     {
       "path": "scripts/update_manifest.py",
-      "sha256": "82e1fcac8c8a7ef12019e4f749eca8fe466b12c2259e391794fa9239594dbf4a",
+      "sha256": "5c082ccc4925eeee9a6d710fab0aeac39732f541030d8dfa3588212ec8a7d32b",
       "origin": "repository-maintenance"
     },
     {
@@ -1387,7 +1462,7 @@
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "sha256": "170c8ce46800c1513b486098d037aa7e976019b8efb10b44fc4fedd35e7486b0",
+      "sha256": "b7374a0040771b1781291c636cab9fe4d1862e1b2e88c3df8d0c9d71e9f64ce7",
       "origin": "repository-maintenance"
     },
     {

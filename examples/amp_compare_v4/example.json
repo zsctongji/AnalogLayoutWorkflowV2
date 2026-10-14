@@ -1,0 +1,9 @@
+{
+  "schema": "analog-layout-flow.example/v1",
+  "synthetic": true,
+  "offline_only": true,
+  "name": "amp_compare_v4",
+  "entrypoint": "work/run_example.py",
+  "project": "config/project.json",
+  "provenance": "Fresh synthetic fixture inspired by the historical directory/stage organization; no copied design data"
+}

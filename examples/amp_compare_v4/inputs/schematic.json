@@ -1,0 +1,248 @@
+{
+  "schema": "analog-layout-example.schematic/v1",
+  "source": {
+    "lib": "synthetic_demo",
+    "cell": "amp_compare_v4",
+    "view": "schematic"
+  },
+  "provenance": "SYNTHETIC_INPUT; no captured circuit or foundry model",
+  "ports": [
+    "VINP",
+    "VINN",
+    "VOUT",
+    "VDD",
+    "VSS",
+    "IBIAS"
+  ],
+  "instances": [
+    {
+      "name": "NREF",
+      "lib": "toy_devices",
+      "cell": "nmos",
+      "params": {
+        "WIDTH": "12u",
+        "LENGTH": "1u",
+        "FINGER_WIDTH": "3.0u",
+        "NF": 4,
+        "MULT": 2
+      },
+      "terms": {
+        "DP": "IBIAS",
+        "GP": "IBIAS",
+        "SP": "VSS",
+        "BP": "VSS"
+      }
+    },
+    {
+      "name": "NTAIL",
+      "lib": "toy_devices",
+      "cell": "nmos",
+      "params": {
+        "WIDTH": "12u",
+        "LENGTH": "1u",
+        "FINGER_WIDTH": "3.0u",
+        "NF": 4,
+        "MULT": 2
+      },
+      "terms": {
+        "DP": "TAIL",
+        "GP": "IBIAS",
+        "SP": "VSS",
+        "BP": "VSS"
+      }
+    },
+    {
+      "name": "NSINK",
+      "lib": "toy_devices",
+      "cell": "nmos",
+      "params": {
+        "WIDTH": "12u",
+        "LENGTH": "1u",
+        "FINGER_WIDTH": "3.0u",
+        "NF": 4,
+        "MULT": 2
+      },
+      "terms": {
+        "DP": "VOUT",
+        "GP": "IBIAS",
+        "SP": "VSS",
+        "BP": "VSS"
+      }
+    },
+    {
+      "name": "NIP",
+      "lib": "toy_devices",
+      "cell": "nmos",
+      "params": {
+        "WIDTH": "16u",
+        "LENGTH": "1u",
+        "FINGER_WIDTH": "4.0u",
+        "NF": 4,
+        "MULT": 2
+      },
+      "terms": {
+        "DP": "N1",
+        "GP": "VINP",
+        "SP": "TAIL",
+        "BP": "VSS"
+      }
+    },
+    {
+      "name": "NIN",
+      "lib": "toy_devices",
+      "cell": "nmos",
+      "params": {
+        "WIDTH": "16u",
+        "LENGTH": "1u",
+        "FINGER_WIDTH": "4.0u",
+        "NF": 4,
+        "MULT": 2
+      },
+      "terms": {
+        "DP": "N2",
+        "GP": "VINN",
+        "SP": "TAIL",
+        "BP": "VSS"
+      }
+    },
+    {
+      "name": "PREF",
+      "lib": "toy_devices",
+      "cell": "pmos",
+      "params": {
+        "WIDTH": "12u",
+        "LENGTH": "1u",
+        "FINGER_WIDTH": "3.0u",
+        "NF": 4,
+        "MULT": 2
+      },
+      "terms": {
+        "DP": "N2",
+        "GP": "N2",
+        "SP": "VDD",
+        "BP": "VDD"
+      }
+    },
+    {
+      "name": "PLOAD",
+      "lib": "toy_devices",
+      "cell": "pmos",
+      "params": {
+        "WIDTH": "12u",
+        "LENGTH": "1u",
+        "FINGER_WIDTH": "3.0u",
+        "NF": 4,
+        "MULT": 2
+      },
+      "terms": {
+        "DP": "N1",
+        "GP": "N2",
+        "SP": "VDD",
+        "BP": "VDD"
+      }
+    },
+    {
+      "name": "PDRIVE",
+      "lib": "toy_devices",
+      "cell": "pmos",
+      "params": {
+        "WIDTH": "16u",
+        "LENGTH": "1u",
+        "FINGER_WIDTH": "4.0u",
+        "NF": 4,
+        "MULT": 4
+      },
+      "terms": {
+        "DP": "VOUT",
+        "GP": "N1",
+        "SP": "VDD",
+        "BP": "VDD"
+      }
+    },
+    {
+      "name": "ND_BIAS",
+      "lib": "toy_devices",
+      "cell": "nmos",
+      "params": {
+        "WIDTH": "12u",
+        "LENGTH": "1u",
+        "FINGER_WIDTH": "3.0u",
+        "NF": 4,
+        "MULT": 2
+      },
+      "terms": {
+        "DP": "VSS",
+        "GP": "VSS",
+        "SP": "VSS",
+        "BP": "VSS"
+      }
+    },
+    {
+      "name": "ND_INPUT",
+      "lib": "toy_devices",
+      "cell": "nmos",
+      "params": {
+        "WIDTH": "16u",
+        "LENGTH": "1u",
+        "FINGER_WIDTH": "4.0u",
+        "NF": 4,
+        "MULT": 2
+      },
+      "terms": {
+        "DP": "VSS",
+        "GP": "VSS",
+        "SP": "VSS",
+        "BP": "VSS"
+      }
+    },
+    {
+      "name": "PD_LOAD",
+      "lib": "toy_devices",
+      "cell": "pmos",
+      "params": {
+        "WIDTH": "12u",
+        "LENGTH": "1u",
+        "FINGER_WIDTH": "3.0u",
+        "NF": 4,
+        "MULT": 2
+      },
+      "terms": {
+        "DP": "VDD",
+        "GP": "VDD",
+        "SP": "VDD",
+        "BP": "VDD"
+      }
+    },
+    {
+      "name": "PD_OUTPUT",
+      "lib": "toy_devices",
+      "cell": "pmos",
+      "params": {
+        "WIDTH": "16u",
+        "LENGTH": "1u",
+        "FINGER_WIDTH": "4.0u",
+        "NF": 4,
+        "MULT": 4
+      },
+      "terms": {
+        "DP": "VDD",
+        "GP": "VDD",
+        "SP": "VDD",
+        "BP": "VDD"
+      }
+    },
+    {
+      "name": "CCOMP",
+      "lib": "toy_devices",
+      "cell": "capacitor",
+      "params": {
+        "CAP": "200f",
+        "MULT": 1
+      },
+      "terms": {
+        "PLUS": "N1",
+        "MINUS": "VOUT"
+      }
+    }
+  ]
+}

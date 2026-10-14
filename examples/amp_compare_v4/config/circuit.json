@@ -1,0 +1,147 @@
+{
+  "schema": "analog-layout-workflow.circuit/v1",
+  "modules": [
+    {
+      "name": "BIAS",
+      "role": "current_mirror",
+      "rows": [
+        [
+          "ND_BIAS",
+          "NREF",
+          "NTAIL",
+          "NSINK",
+          "NSINK",
+          "NTAIL",
+          "NREF",
+          "ND_BIAS"
+        ]
+      ],
+      "dummies": [
+        "ND_BIAS"
+      ],
+      "matching": "common_axis",
+      "orientations": {
+        "ND_BIAS__M0": "R0",
+        "NREF__M0": "R0",
+        "NTAIL__M0": "R0",
+        "NSINK__M0": "R0",
+        "NSINK__M1": "MY",
+        "NTAIL__M1": "MY",
+        "NREF__M1": "MY",
+        "ND_BIAS__M1": "MY"
+      }
+    },
+    {
+      "name": "INPUT",
+      "role": "differential_pair",
+      "rows": [
+        [
+          "ND_INPUT",
+          "NIN",
+          "NIP",
+          "NIP",
+          "NIN",
+          "ND_INPUT"
+        ]
+      ],
+      "dummies": [
+        "ND_INPUT"
+      ],
+      "pattern": "ABBA",
+      "matching": "common_axis",
+      "orientations": {
+        "ND_INPUT__M0": "R0",
+        "NIP__M0": "R0",
+        "NIN__M0": "R0",
+        "NIN__M1": "MY",
+        "NIP__M1": "MY",
+        "ND_INPUT__M1": "MY"
+      }
+    },
+    {
+      "name": "LOAD",
+      "role": "current_mirror",
+      "rows": [
+        [
+          "PD_LOAD",
+          "PLOAD",
+          "PREF",
+          "PREF",
+          "PLOAD",
+          "PD_LOAD"
+        ]
+      ],
+      "dummies": [
+        "PD_LOAD"
+      ],
+      "pattern": "ABBA",
+      "matching": "common_axis",
+      "orientations": {
+        "PD_LOAD__M0": "R0",
+        "PREF__M0": "R0",
+        "PLOAD__M0": "R0",
+        "PLOAD__M1": "MY",
+        "PREF__M1": "MY",
+        "PD_LOAD__M1": "MY"
+      }
+    },
+    {
+      "name": "OUTPUT",
+      "role": "second_stage",
+      "rows": [
+        [
+          "PD_OUTPUT",
+          "PDRIVE",
+          "PDRIVE",
+          "PD_OUTPUT"
+        ],
+        [
+          "PD_OUTPUT",
+          "PDRIVE",
+          "PDRIVE",
+          "PD_OUTPUT"
+        ]
+      ],
+      "dummies": [
+        "PD_OUTPUT"
+      ],
+      "matching": "common_axis",
+      "orientations": {
+        "PD_OUTPUT__M0": "R0",
+        "PDRIVE__M0": "R0",
+        "PDRIVE__M1": "MY",
+        "PD_OUTPUT__M1": "MY",
+        "PD_OUTPUT__M2": "R0",
+        "PDRIVE__M2": "R0",
+        "PDRIVE__M3": "MY",
+        "PD_OUTPUT__M3": "MY"
+      }
+    },
+    {
+      "name": "COMPENSATION",
+      "role": "compensation_capacitor",
+      "rows": [
+        [
+          "CCOMP"
+        ]
+      ],
+      "matching": "common_axis",
+      "orientations": {
+        "CCOMP": "R0"
+      }
+    }
+  ],
+  "floorplan": {
+    "mode": "stack",
+    "order": [
+      "BIAS",
+      "INPUT",
+      "LOAD",
+      "COMPENSATION",
+      "OUTPUT"
+    ],
+    "axis_x_um": 0,
+    "device_gap_um": 4,
+    "macro_gap_um": 8
+  }
+}

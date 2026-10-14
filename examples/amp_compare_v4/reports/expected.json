@@ -1,0 +1,21 @@
+{
+  "schema": "analog-layout-example.expected/v1",
+  "physical_copies": 29,
+  "functional_mos_modules": 4,
+  "required_nets": [
+    "IBIAS",
+    "N1",
+    "N2",
+    "TAIL",
+    "VDD",
+    "VINN",
+    "VINP",
+    "VOUT",
+    "VSS"
+  ],
+  "materializable": false,
+  "drc": "NOT_RUN",
+  "lvs": "NOT_RUN",
+  "pex": "NOT_RUN",
+  "postsim": "NOT_RUN"
+}

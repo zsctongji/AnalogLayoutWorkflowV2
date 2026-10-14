@@ -1,0 +1,51 @@
+{
+  "schema": "analog-layout-workflow.routing-policy/v1",
+  "backend": "symmetric_fast",
+  "example_recipe": {
+    "topology": "self_symmetric_external_fanout",
+    "local_stub_base_um": 0.8,
+    "local_stub_pitch_um": 1.2,
+    "max_local_m1_um": 5,
+    "external_trunk_pitch_um": 1.4,
+    "track_candidate_limit": 8,
+    "track_attempt_budget": 160,
+    "channel_margin_um": 8,
+    "bus_pitch_um": 1.4,
+    "widths_by_role_um": {
+      "local": 0.4,
+      "collection": 0.4,
+      "trunk": 0.4
+    },
+    "supply_widths_by_role_um": {
+      "local": 0.8,
+      "collection": 0.8,
+      "trunk": 0.8
+    },
+    "directness_excursion_um": 512,
+    "ports": [
+      "VINP",
+      "VINN",
+      "VOUT",
+      "VDD",
+      "VSS",
+      "IBIAS"
+    ],
+    "net_classes": {
+      "IBIAS": "bias",
+      "N1": "high_impedance",
+      "N2": "bias",
+      "TAIL": "ordinary",
+      "VINP": "sensitive",
+      "VINN": "sensitive",
+      "VOUT": "output",
+      "VDD": "power",
+      "VSS": "ground"
+    },
+    "supply_width_basis": {
+      "source": "synthetic teaching configuration",
+      "method": "illustrative wire width only; IR/EM not verified"
+    },
+    "basis": "Geometry/contract demonstration; no process, parasitic or performance qualification",
+    "port_pitch_um": 3.2
+  }
+}

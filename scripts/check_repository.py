@@ -16,15 +16,28 @@ def source_files():
 
 def check(strict_manifest=True):
     errors, links = [], 0
-    if (ROOT / 'examples').exists():
-        errors.append('Circuit examples must not be bundled')
+    examples = ROOT / 'examples'
+    if examples.exists():
+        for example in examples.iterdir():
+            metadata = example / 'example.json'
+            try:
+                data = json.loads(metadata.read_text(encoding='utf-8'))
+                if (data.get('schema') != 'analog-layout-flow.example/v1' or
+                        data.get('synthetic') is not True or data.get('offline_only') is not True):
+                    raise ValueError('Synthetic offline provenance required')
+                for key in ('entrypoint', 'project'):
+                    path = (example / data[key]).resolve()
+                    if not path.is_relative_to(example.resolve()) or not path.is_file():
+                        raise ValueError('Missing or escaping example ' + key)
+            except (OSError, ValueError, KeyError, TypeError) as error:
+                errors.append('Unqualified bundled example: ' + example.name + ': ' + str(error))
     if (ROOT / '.git').exists():
         tracked = subprocess.run(['git', 'ls-files', '-z'], cwd=ROOT, capture_output=True, text=True, encoding='utf-8')
         if tracked.returncode:
             errors.append('Cannot inspect Git tracked-file exclusions')
         for name in tracked.stdout.split('\0'):
             path = Path(name)
-            if name and (any(part in {'local','runs','outputs','artifacts','examples'} for part in path.parts) or path.name == '.env' or path.name.endswith('.env') or path.suffix in {'.gds','.gdsii','.oa','.psf'}):
+            if name and (any(part in {'local','runs','outputs','artifacts'} for part in path.parts) or path.name == '.env' or path.name.endswith('.env') or path.suffix in {'.gds','.gdsii','.oa','.psf'}):
                 errors.append('Private/generated file tracked by Git: ' + name)
     for p in source_files():
         relative = p.relative_to(ROOT)

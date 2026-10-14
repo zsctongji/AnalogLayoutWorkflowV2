@@ -2,7 +2,7 @@
 
 A reusable skill-based workflow for analog IC placement, contacts, guard rings, routing, physical checks and optional post-layout analysis. It combines agent planning with deterministic Python helpers and site-qualified Virtuoso, Calibre and Spectre adapters.
 
-The repository contains workflow source, contracts, synthetic tests and a vendored Virtuoso bridge. Circuit examples, historical results, native design databases, filled site configuration and foundry files are excluded.
+The repository contains workflow source, contracts, synthetic tests, one runnable synthetic example and a vendored Virtuoso bridge. Historical project results, native design databases, filled site configuration and foundry files are excluded.
 
 ## Workflow
 
@@ -51,6 +51,14 @@ Linux/macOS:
 
 `python scripts/alflow.py doctor` also works directly from the checkout. These commands do not contact CAD. Use an editable checkout; a frontend-only wheel needs `ALFLOW_ROOT` pointing to the checkout to discover its skills.
 
+## Runnable example
+
+```bash
+python examples/amp_compare_v4/work/run_example.py
+```
+
+[amp_compare_v4](examples/amp_compare_v4/README.md) demonstrates external project/PDK/circuit configuration, 29-copy placement, complete `seed_spec` construction, generated symmetric tracks and independent geometric checks. It runs without EDA using clearly marked synthetic inputs and writes ignored outputs. Native physical stages and DRC/LVS/PEX/post-simulation remain `NOT_RUN`. The walkthrough explains how an agent can write a new adapter from the contracts without previous conversation history.
+
 ## Routing selection
 
 | Request | Skill | Backend |
@@ -68,6 +76,7 @@ skills/                         Workflow skills, helper scripts and synthetic te
 src/analog_layout_workflow/      Offline CLI frontend
 scripts/                        Skill installer, repository checks and test runner
 tests/                          Frontend and installation tests
+examples/amp_compare_v4/         Runnable synthetic configuration and routing walkthrough
 config/                         Unfilled registry and site templates
 docs/                           Installation, architecture, configuration and verification
 vendor/virtuoso-bridge-lite/     Bridge source with its original license

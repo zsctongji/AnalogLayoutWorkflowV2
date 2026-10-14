@@ -1,0 +1,26 @@
+{
+  "schema": "analog-layout-workflow.project/v1",
+  "source": {
+    "lib": "synthetic_demo",
+    "cell": "amp_compare_v4",
+    "view": "schematic"
+  },
+  "target": {
+    "lib": "synthetic_demo",
+    "cell": "amp_compare_v4",
+    "view": "layout"
+  },
+  "pdk": "pdk-map.json",
+  "circuit": "circuit.json",
+  "routing": "routing-policy.json",
+  "inputs": {
+    "schematic": "../inputs/schematic.json"
+  },
+  "example": {
+    "synthetic": true,
+    "mode": "offline"
+  },
+  "verification": {
+    "waivers": []
+  }
+}

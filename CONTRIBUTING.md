@@ -16,3 +16,5 @@ The packaged source manifest is a snapshot. For a deliberate release, run `pytho
 A stage adapter must declare inputs, supported targets/objects, preconditions, transaction/save/readback behavior and receipt semantics. Code changes invalidate previous code-bound registration/qualification. Synthetic tests verify their stated invariants; they do not establish foundry closure or qualify live adapters.
 
 Keep credentials, host identities, filled environments, proprietary PDK/deck/model files, native OA/GDS, PEX/PSF and actual project results outside version control. Use synthetic or authorized shareable inputs for regression cases. Preserve third-party authorship and licenses.
+
+Bundled walkthroughs must be freshly authored synthetic offline examples with an `example.json` provenance declaration and end-to-end tests. Keep static acceptance contracts small; write generated candidates/reports to ignored output directories. Mark physical stages that were not executed as `NOT_RUN`, and never present a toy profile as process qualification. See the [worked example](examples/amp_compare_v4/README.md).

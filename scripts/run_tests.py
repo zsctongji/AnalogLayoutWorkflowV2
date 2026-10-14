@@ -21,6 +21,7 @@ def main():
         import pytest
         return pytest.main(['--import-mode=importlib', '-q', str(suite)])
     suites = [ROOT / 'tests']
+    suites.extend(sorted((ROOT / 'examples').glob('*/tests')))
     standalone = []
     for skill in sorted((ROOT / 'skills').iterdir()):
         tests = skill / 'tests'

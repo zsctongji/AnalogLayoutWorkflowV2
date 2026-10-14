@@ -16,7 +16,7 @@ The workflow uses separate external project, PDK, circuit, routing and site conf
 
 No selected method defaults to `symmetric_fast`. It requires `routing.fast_templates` with a complete measured seed, axis and whole-net classifications. `strict_symmetric` uses `routing.symmetry_solver` with complete groups, search budgets and sourced local-access/PDK rules. `general` explicitly selects the general planner. Do not pass one backend's options through another or silently fall back after failure.
 
-The configured frontend is `skills/analog-layout-workflow/scripts/configured_flow.py`. Its `validate`, `prepare`, `place`, `macro-opt`, `route`, `symmetric-fast` and `symmetric-route` commands generate offline artifacts only. Full contracts describe their required inputs and status semantics; no bundled design input is provided.
+The configured frontend is `skills/analog-layout-workflow/scripts/configured_flow.py`. Its `validate`, `prepare`, `place`, `macro-opt`, `route`, `symmetric-fast` and `symmetric-route` commands generate offline artifacts only. Full contracts describe their required inputs and status semantics. The [synthetic walkthrough](../examples/amp_compare_v4/README.md) shows how to assemble complete input artifacts and replay the generated fast configuration. Its toy mappings and geometry cannot qualify a real PDK.
 
 ## Changing PDK
 

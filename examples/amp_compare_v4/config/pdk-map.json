@@ -1,0 +1,227 @@
+{
+  "schema": "analog-layout-workflow.pdk-map/v1",
+  "technology_library": "toy_technology",
+  "provenance": "SYNTHETIC_PDK; never a foundry rule source",
+  "devices": [
+    {
+      "kind": "nmos",
+      "source_master": {
+        "lib": "toy_devices",
+        "cell": "nmos"
+      },
+      "target_master": {
+        "lib": "toy_devices",
+        "cell": "nmos_layout",
+        "view": "layout"
+      },
+      "parameters": {
+        "m": {
+          "source": "MULT",
+          "target": "mult",
+          "type": "int",
+          "default": 1
+        },
+        "w": {
+          "source": "WIDTH",
+          "target": "width_um",
+          "type": "float",
+          "scale": 1000000.0,
+          "required": true
+        },
+        "l": {
+          "source": "LENGTH",
+          "target": "length_um",
+          "type": "float",
+          "scale": 1000000.0,
+          "required": true
+        },
+        "fw": {
+          "source": "FINGER_WIDTH",
+          "target": "finger_width_um",
+          "type": "float",
+          "scale": 1000000.0,
+          "required": true
+        },
+        "fingers": {
+          "source": "NF",
+          "target": "fingers",
+          "type": "int",
+          "scale": 1,
+          "required": true
+        }
+      },
+      "terminals": {
+        "D": "DP",
+        "G": "GP",
+        "S": "SP",
+        "B": "BP"
+      }
+    },
+    {
+      "kind": "pmos",
+      "source_master": {
+        "lib": "toy_devices",
+        "cell": "pmos"
+      },
+      "target_master": {
+        "lib": "toy_devices",
+        "cell": "pmos_layout",
+        "view": "layout"
+      },
+      "parameters": {
+        "m": {
+          "source": "MULT",
+          "target": "mult",
+          "type": "int",
+          "default": 1
+        },
+        "w": {
+          "source": "WIDTH",
+          "target": "width_um",
+          "type": "float",
+          "scale": 1000000.0,
+          "required": true
+        },
+        "l": {
+          "source": "LENGTH",
+          "target": "length_um",
+          "type": "float",
+          "scale": 1000000.0,
+          "required": true
+        },
+        "fw": {
+          "source": "FINGER_WIDTH",
+          "target": "finger_width_um",
+          "type": "float",
+          "scale": 1000000.0,
+          "required": true
+        },
+        "fingers": {
+          "source": "NF",
+          "target": "fingers",
+          "type": "int",
+          "scale": 1,
+          "required": true
+        }
+      },
+      "terminals": {
+        "D": "DP",
+        "G": "GP",
+        "S": "SP",
+        "B": "BP"
+      }
+    },
+    {
+      "kind": "capacitor",
+      "source_master": {
+        "lib": "toy_devices",
+        "cell": "capacitor"
+      },
+      "target_master": {
+        "lib": "toy_devices",
+        "cell": "capacitor_layout",
+        "view": "layout"
+      },
+      "parameters": {
+        "m": {
+          "source": "MULT",
+          "target": "mult",
+          "type": "int",
+          "default": 1
+        },
+        "c": {
+          "source": "CAP",
+          "target": "cap_ff",
+          "type": "float",
+          "scale": 1000000000000000.0,
+          "required": true
+        }
+      },
+      "terminals": {
+        "N1": "PLUS",
+        "N2": "MINUS"
+      }
+    }
+  ],
+  "layer_roles": {
+    "local": "demo_l1",
+    "collection": "demo_l2",
+    "trunk": "demo_l3"
+  },
+  "routing_rules": {
+    "metal_levels": {
+      "demo_l1": 1,
+      "demo_l2": 2,
+      "demo_l3": 3
+    }
+  },
+  "synthetic_geometry": {
+    "manufacturing_grid_um": 0.1,
+    "mos_finger_pitch_um": 1.6,
+    "mos_frame_width_um": 1.6,
+    "mos_frame_height_um": 32,
+    "capacitor_size_um": [
+      8,
+      36
+    ],
+    "pin_width_um": 0.4,
+    "mos_pin_offsets_um": {
+      "D": [
+        -1.2,
+        4
+      ],
+      "G": [
+        -0.4,
+        12
+      ],
+      "S": [
+        0.4,
+        20
+      ],
+      "B": [
+        1.2,
+        28
+      ]
+    },
+    "capacitor_pin_offsets_um": {
+      "N1": [
+        0,
+        4
+      ],
+      "N2": [
+        0,
+        20
+      ]
+    }
+  },
+  "synthetic_routing": {
+    "minimum_width_um": 0.2,
+    "minimum_spacing_um": 0.2,
+    "cut_size_um": [
+      0.2,
+      0.2
+    ],
+    "cut_spacing_um": [
+      0.2,
+      0.2
+    ],
+    "enclosure_um": [
+      0.1,
+      0.1
+    ],
+    "adjacent_vias": [
+      {
+        "name": "DEMO_V12",
+        "lower_role": "local",
+        "upper_role": "collection",
+        "cut_layer": "demo_cut12"
+      },
+      {
+        "name": "DEMO_V23",
+        "lower_role": "collection",
+        "upper_role": "trunk",
+        "cut_layer": "demo_cut23"
+      }
+    ]
+  }
+}

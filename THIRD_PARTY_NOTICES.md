@@ -6,4 +6,4 @@ The vendored `virtuoso-bridge-lite` component retains its original MIT license a
 
 ALIGN, MAGICAL and other routing/design projects may be referenced by skill documentation as research background. A skill named ALIGN-style placement does not establish that ALIGN-public is installed, bundled or executed. Referencing a project does not import its code, license or process qualification. Preserve any additional attribution when introducing third-party code in future changes.
 
-The repository does not contain proprietary EDA tools, foundry decks, device model libraries, captured reference layouts or actual circuit examples. Small synthetic RC fixture files are retained only for parser/kernel regression tests.
+The repository does not contain proprietary EDA tools, foundry decks, device model libraries, captured reference layouts or actual project data. Small synthetic RC fixtures support parser/kernel regression tests. The [amp_compare_v4 walkthrough](examples/amp_compare_v4/README.md) contains freshly authored toy configuration, geometry and connectivity only; it includes no historical design or foundry models.

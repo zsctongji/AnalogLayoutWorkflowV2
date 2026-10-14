@@ -16,7 +16,8 @@ for path in sorted(ROOT.rglob('*')):
     if path.is_symlink():
         raise ValueError('Source symlink cannot be fingerprinted as an ordinary file')
     name = relative.as_posix()
-    files.append({'path': name, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'origin': origins.get(name, 'repository-maintenance')})
+    default_origin = 'synthetic-offline-example' if relative.parts[0] == 'examples' else 'repository-maintenance'
+    files.append({'path': name, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'origin': origins.get(name, default_origin)})
 manifest['files'] = files
 manifest_path.write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8', newline='\n')
 print(json.dumps({'status': 'MANIFEST_UPDATED', 'files': len(files)}))

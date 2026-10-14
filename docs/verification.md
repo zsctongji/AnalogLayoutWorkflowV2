@@ -4,7 +4,9 @@
 
 `scripts/check_repository.py` checks source layout, skill frontmatter, maintained English Markdown, local documentation links, Python syntax, packaged provenance hashes and known private-data signatures. `--allow-modified` skips snapshot hashes while retaining the structural checks. The scan is scoped and does not prove absence of every possible secret.
 
-`scripts/run_tests.py` runs repository and skill suites in isolated subprocesses because several legacy helpers share module names. Synthetic RC netlists under the parasitic parser's test fixtures are retained as unit-test inputs. No real circuit examples or historical simulation results are included.
+`scripts/run_tests.py` runs repository, example and skill suites in isolated subprocesses because several legacy helpers share module names. Synthetic RC netlists under the parasitic parser's test fixtures are retained as unit-test inputs. The [synthetic example](../examples/amp_compare_v4/README.md) is exercised end to end, including renamed identities/layers, shifted axis, deterministic regeneration, shared frontend replay and invalid-input rejection. No real project results or historical simulation data are included.
+
+Bundled examples require `example.json` with synthetic/offline provenance and contained entrypoint/project paths. Generated runs remain ignored and subject to the tracked-file exclusion checks. Example PASS describes its represented offline geometry only; physical stages retain explicit `NOT_RUN` statuses.
 
 GitHub Actions uses Windows/Linux and Python 3.11/3.12. It installs offline dependencies and runs repository checks, tests and read-only CLI inspection. CI does not connect to Virtuoso or execute Calibre/Spectre; successful CI is not native capability qualification or foundry closure.
 
